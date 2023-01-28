@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:storybook/recommended"
+  ],
+  "globals": {
+    "React": "readonly"
+  },
+  "plugins": ["@typescript-eslint"],
+  "overrides": [
+    {
+      "files": ["*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],
+      "rules": {
+        // example of overriding a rule
+        "storybook/hierarchy-separator": "error"
+      }
+    }
+  ],
+  "rules": {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+
+    // "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }],
+    "react/jsx-curly-brace-presence": [
+      1,
+      { "props": "always", "children": "ignore", "propElementValues": "always" }
+    ]
+  }
+}

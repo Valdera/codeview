@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import RichTextEditor from './RichTextEditor';
+import RichTextEditor, { IRichTextEditor } from './RichTextEditor';
+import { mockRichTextEditorProps } from './RichTextEditor.mock';
 
 export default {
   title: 'components/RichTextEditor',
@@ -16,4 +17,6 @@ const Template: ComponentStory<typeof RichTextEditor> = (args) => (
 export const Base = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 
-Base.args = {};
+Base.args = {
+  ...mockRichTextEditorProps.base,
+} as IRichTextEditor;

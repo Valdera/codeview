@@ -1,3 +1,9 @@
 .code-block {
   position: relative;
 }
+
+.rte {
+  img {
+    @apply max-h-[50vh];
+  }
+}

@@ -6,7 +6,7 @@ import { NextPageWithLayout } from './page';
 const Home: NextPageWithLayout = () => {
   return (
     <>
-      <RichTextEditor />
+      <RichTextEditor disabled={false} defaultEditable={true} />
     </>
   );
 };

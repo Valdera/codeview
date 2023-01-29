@@ -17,3 +17,10 @@ a {
   box-sizing: border-box;
   list-style: square;
 }
+
+@for $i from 1 through 8 {
+  [data-indent='#{$i}'] {
+    $val: $i * 3rem;
+    padding-left: $val;
+  }
+}

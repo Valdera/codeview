@@ -37,6 +37,12 @@ import s from './RichTextEditor.module.scss';
 const defaultContent = `<h2 style="text-align: center; margin-left: 0px!important;"><strong>Welcome to Code View</strong></h2><p style="margin-left: 0px!important;"><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap.dev</a> and supports all of its features</p><pre><code>def positoin():
 test</code></pre>`;
 
+/**TODO:
+ * - Add animation
+ * - Add documentation
+ * - Move request to lib
+ * - Add image resize (optional)
+ */
 export interface IRichTextEditor {
   content?: string;
   disabled?: boolean;

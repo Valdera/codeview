@@ -11,7 +11,9 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof PrimaryLayout> = (args) => (
-  <PrimaryLayout {...args} />
+  <div style={{ width: '100px' }}>
+    <PrimaryLayout {...args} />
+  </div>
 );
 
 export const Base = Template.bind({});

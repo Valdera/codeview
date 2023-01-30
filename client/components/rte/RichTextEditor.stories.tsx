@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import RichTextEditor, { IRichTextEditor } from './RichTextEditor';
-import { mockRichTextEditorProps } from './RichTextEditor.mock';
+import { mockRichTextEditorProps } from './RichTextEditor.mocks';
 
 export default {
   title: 'components/RichTextEditor',

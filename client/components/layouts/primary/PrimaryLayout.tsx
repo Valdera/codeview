@@ -14,10 +14,12 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
   return (
     <>
       <Sidebar>
-        <div {...divProps} className={cn(styles.root, `${justify}`)}>
-          <main className={'px-5'}>{children}</main>
-          <div className={'m-auto'} />
-        </div>
+        <main>
+          <div {...divProps} className={cn(styles.root, `${justify}`)}>
+            {children}
+            <div className={'m-auto'} />
+          </div>
+        </main>
       </Sidebar>
     </>
   );

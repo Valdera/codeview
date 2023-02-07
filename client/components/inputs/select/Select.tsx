@@ -9,15 +9,17 @@ export interface ISelect {
   data: { value: string; label: string; color: SupportedColor }[];
   disabled?: boolean;
   label?: string;
-  handleChange?: (value: string | null) => void;
+  placeholder?: string;
+  onChange?: (value: string | null) => void;
 }
 
 const Select: React.FC<ISelect> = ({
   value,
   data,
-  handleChange,
+  onChange,
   disabled = false,
   label = '',
+  placeholder = '',
 }) => {
   const getColorFromValue = (value: string | null): string => {
     if (value) {
@@ -34,13 +36,14 @@ const Select: React.FC<ISelect> = ({
     <MantineSelect
       label={label}
       data={data}
+      placeholder={placeholder}
       value={value}
       transition={'pop-top-left'}
       transitionDuration={80}
       itemComponent={SelectItem}
       transitionTimingFunction={'ease'}
       readOnly={disabled}
-      onChange={handleChange}
+      onChange={onChange}
       styles={(theme) => ({
         item: {
           '&:[data-selected]': {
@@ -64,10 +67,10 @@ const Select: React.FC<ISelect> = ({
         input: {
           backgroundColor: value
             ? theme.colors[getColorFromValue(value)][1]
-            : theme.colors.teal[1],
+            : theme.colors.gray[1],
           color: value
             ? theme.colors[getColorFromValue(value)][9]
-            : theme.colors.teal[9],
+            : theme.colors.gray[9],
           fontWeight: 500,
           '&:focus': {
             outline: 'none',

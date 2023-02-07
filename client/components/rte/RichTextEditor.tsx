@@ -47,13 +47,14 @@ export interface IRichTextEditor {
   content?: string;
   disabled?: boolean;
   defaultEditable?: boolean;
-  handleSave?: () => void;
+  onSave?: (content: string) => void;
 }
 
 const RichTextEditor: React.FC<IRichTextEditor> = ({
   content = defaultContent,
   defaultEditable = true,
   disabled = false,
+  onSave = (_content) => {},
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [editable, setEditable] = useState(defaultEditable);
@@ -97,10 +98,16 @@ const RichTextEditor: React.FC<IRichTextEditor> = ({
     editable: !disabled && editable,
   });
 
+  if (!editor) {
+    return null;
+  }
+
   const handleSubmit = () => {
     setIsLoading(true);
 
-    editor?.setEditable(false);
+    onSave(editor.getHTML().toString());
+
+    editor.setEditable(false);
     setEditable(false);
     setIsLoading(false);
   };
@@ -121,16 +128,13 @@ const RichTextEditor: React.FC<IRichTextEditor> = ({
             headers: { 'Content-Type': 'multipart/form-data' },
           })
             .then(function (response) {
-              //handle success
-              console.log(response);
               editor
-                ?.chain()
+                .chain()
                 .focus()
                 .setImage({ src: response.data.imageUrl })
                 .run();
             })
             .catch(function (response) {
-              //handle error
               console.log(response);
             });
         }
@@ -206,7 +210,7 @@ const RichTextEditor: React.FC<IRichTextEditor> = ({
                 isLoading={isLoading}
                 icon={<EditIcon />}
                 onClick={() => {
-                  editor?.setEditable(true);
+                  editor.setEditable(true);
                   setEditable(true);
                 }}
               />

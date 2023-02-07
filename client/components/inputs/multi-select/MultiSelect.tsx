@@ -14,19 +14,21 @@ export interface IMultiSelect {
   value?: string[];
   creatable?: boolean;
   label?: string;
+  placeholder?: string;
   disabled?: boolean;
-  handleChange?: (value: string[]) => void;
-  handleCreate?: ((query: string) => string | null) | undefined;
+  onChange?: (value: string[]) => void;
+  onCreate?: ((query: string) => string | null) | undefined;
 }
 
 const MultiSelect: React.FC<IMultiSelect> = ({
   data,
-  handleCreate,
-  handleChange,
+  onCreate,
+  onChange,
   value = [],
   disabled = false,
   creatable = true,
   label = '',
+  placeholder = '',
 }) => {
   return (
     <>
@@ -34,7 +36,7 @@ const MultiSelect: React.FC<IMultiSelect> = ({
         label={label}
         data={data}
         defaultValue={value}
-        placeholder={'Select items'}
+        placeholder={placeholder}
         searchable
         creatable={creatable}
         valueComponent={(props) => {
@@ -45,20 +47,20 @@ const MultiSelect: React.FC<IMultiSelect> = ({
         transition={'pop-top-left'}
         transitionTimingFunction={'ease'}
         getCreateLabel={(query) => `+ Create ${query}`}
-        onCreate={handleCreate}
-        onChange={handleChange}
+        onCreate={onCreate}
+        onChange={onChange}
         className={'w-full'}
-        styles={(_themes) => ({
-          values: {},
+        styles={(theme) => ({
           input: {
-            margin: '2px',
-            transform: 'scale(1)',
+            backgroundColor: theme.colors.gray[1],
+            color: theme.colors.gray[9],
+            width: '100%',
           },
           wrapper: {
-            transform: 'scale(1)',
+            width: '100%',
           },
           searchInput: {
-            margin: 0,
+            width: '100%',
           },
         })}
       />
@@ -73,17 +75,13 @@ const Value: React.FC<
     <div className={others.className}>
       <Flex
         alignItems={'center'}
+        justifyContent={'center'}
         backgroundColor={color}
         padding={'2px'}
         paddingLeft={'3'}
         borderRadius={'md'}
       >
-        <Text
-          color={'white'}
-          lineHeight={'1'}
-          fontSize={'12'}
-          fontWeight={'medium'}
-        >
+        <Text color={'white'} lineHeight={'1'} fontWeight={'medium'}>
           {label}
         </Text>
         <CloseButton

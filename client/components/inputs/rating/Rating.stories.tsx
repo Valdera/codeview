@@ -16,7 +16,7 @@ const Template: ComponentStory<typeof Rating> = (args) => {
 
   return (
     <div className={'w-full m-10 flex items-center justify-center'}>
-      <Rating value={value} handleChange={(val) => setValue(val)} {...args} />
+      <Rating value={value} onChange={(val) => setValue(val)} {...args} />
     </div>
   );
 };

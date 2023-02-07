@@ -17,7 +17,7 @@ const Template: ComponentStory<typeof Select> = (args) => {
   return (
     <div className={'w-full m-10 flex items-center justify-center'}>
       <div style={{ width: '200px' }}>
-        <Select value={value} handleChange={(val) => setValue(val)} {...args} />
+        <Select value={value} onChange={(val) => setValue(val)} {...args} />
       </div>
     </div>
   );

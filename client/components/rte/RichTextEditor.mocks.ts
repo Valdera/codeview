@@ -3,7 +3,7 @@ import { IRichTextEditor } from './RichTextEditor';
 const base: IRichTextEditor = {
   disabled: false,
   defaultEditable: true,
-  handleSave: () => {},
+  onSave: () => {},
 };
 
 export const mockRichTextEditorProps = {

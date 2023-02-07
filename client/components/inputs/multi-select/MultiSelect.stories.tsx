@@ -19,7 +19,7 @@ const Template: ComponentStory<typeof MultiSelect> = (args) => {
       <div style={{ width: '500px', padding: '10px' }}>
         <MultiSelect
           value={value}
-          handleChange={(val) => setValue(val)}
+          onChange={(val) => setValue(val)}
           {...args}
         />
       </div>

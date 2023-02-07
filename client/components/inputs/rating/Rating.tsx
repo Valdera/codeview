@@ -1,26 +1,35 @@
 import { Flex, Text } from '@chakra-ui/react';
+import { Rating as RatingNumber } from '@lib/types/problem';
 import { Rating as MantineRating } from '@mantine/core';
 
 export interface IRating {
-  value?: number;
+  value?: RatingNumber;
   label?: string;
-  handleChange?: (value: number) => void;
+  onChange?: (value: RatingNumber) => void;
+  disabled?: boolean;
 }
 
 const Rating: React.FC<IRating> = ({
   value = 0,
-  handleChange = () => {},
+  onChange = () => {},
   label = '',
+  disabled = false,
 }) => {
   return (
     <div>
       {label && (
-        <Text fontSize={'sm'} fontWeight={'500'} fontFamily={'heading'}>
+        <Text
+          display={'inline-block'}
+          lineHeight={'1.55'}
+          fontSize={'sm'}
+          fontWeight={'500'}
+          fontFamily={'heading'}
+        >
           Rating
         </Text>
       )}
       <Flex height={10} alignItems={'center'}>
-        <MantineRating value={value} onChange={handleChange} />
+        <MantineRating value={value} onChange={onChange} readOnly={disabled} />
       </Flex>
     </div>
   );

@@ -17,6 +17,17 @@ import {
   FiTrendingUp,
 } from 'react-icons/fi';
 
+import {
+  openSpotlight,
+  SpotlightAction,
+  SpotlightProvider,
+} from '@mantine/spotlight';
+import {
+  IconDashboard,
+  IconFileText,
+  IconHome,
+  IconSearch,
+} from '@tabler/icons';
 import { ReactNode } from 'react';
 import { IconType } from 'react-icons';
 import MobileNav from './MobileNav';
@@ -28,6 +39,27 @@ const defaultLinkItems: LinkItems = [
   { name: 'Explore', icon: FiCompass },
   { name: 'Favourites', icon: FiStar },
   { name: 'Settings', icon: FiSettings },
+];
+
+const actions: SpotlightAction[] = [
+  {
+    title: 'Home',
+    description: 'Get to home page',
+    onTrigger: () => console.log('Home'),
+    icon: <IconHome size={18} />,
+  },
+  {
+    title: 'Dashboard',
+    description: 'Get full information about current system status',
+    onTrigger: () => console.log('Dashboard'),
+    icon: <IconDashboard size={18} />,
+  },
+  {
+    title: 'Documentation',
+    description: 'Visit documentation to lean more about all features',
+    onTrigger: () => console.log('Documentation'),
+    icon: <IconFileText size={18} />,
+  },
 ];
 
 export interface LinkItem {
@@ -49,36 +81,44 @@ const Sidebar: React.FC<ISidebar> = ({
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box
-      minH={'100vh'}
-      bg={useColorModeValue('gray.100', 'gray.900')}
-      {...rest}
+    <SpotlightProvider
+      actions={actions}
+      searchIcon={<IconSearch size={18} />}
+      searchPlaceholder={'Search...'}
+      shortcut={'mod + shift + 1'}
+      nothingFoundMessage={'Nothing found...'}
     >
-      <SidebarContent
-        onClose={() => onClose}
-        linkItems={linkItems}
-        display={{ base: 'none', md: 'block' }}
-      />
-      <Drawer
-        autoFocus={false}
-        isOpen={isOpen}
-        placement={'left'}
-        onClose={onClose}
-        returnFocusOnClose={false}
-        onOverlayClick={onClose}
-        size={'full'}
+      <Box
+        minH={'100vh'}
+        bg={useColorModeValue('gray.100', 'gray.900')}
+        {...rest}
       >
-        <DrawerContent>
-          <SidebarContent onClose={onClose} linkItems={linkItems} />
-        </DrawerContent>
-      </Drawer>
+        <SidebarContent
+          onClose={() => onClose}
+          linkItems={linkItems}
+          display={{ base: 'none', md: 'block' }}
+        />
+        <Drawer
+          autoFocus={false}
+          isOpen={isOpen}
+          placement={'left'}
+          onClose={onClose}
+          returnFocusOnClose={false}
+          onOverlayClick={onClose}
+          size={'full'}
+        >
+          <DrawerContent>
+            <SidebarContent onClose={onClose} linkItems={linkItems} />
+          </DrawerContent>
+        </Drawer>
 
-      {/* mobilenav */}
-      <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p={'4'}>
-        {children}
+        {/* mobilenav */}
+        <MobileNav onOpen={onOpen} onSearchClick={() => openSpotlight()} />
+        <Box ml={{ base: 0, md: 60 }} p={'4'}>
+          {children}
+        </Box>
       </Box>
-    </Box>
+    </SpotlightProvider>
   );
 };
 
@@ -110,7 +150,7 @@ const SidebarContent: React.FC<ISidebarContent> = ({
         justifyContent={'space-between'}
       >
         <Text fontSize={'2xl'} fontFamily={'monospace'} fontWeight={'bold'}>
-          Logo
+          CodeView
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>

@@ -16,6 +16,7 @@ import (
 	problemService "codeview/internal/service/problem"
 
 	"cloud.google.com/go/storage"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +26,7 @@ func main() {
 	config := config.Get()
 
 	router := gin.Default()
+	router.Use(cors.Default())
 
 	// TODO: Separate this to a proper definition
 	// Initialize google storage client

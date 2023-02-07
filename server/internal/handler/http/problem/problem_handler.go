@@ -31,6 +31,25 @@ func New(router *gin.Engine, problemService domain.ProblemService, config *Confi
 
 	g := router.Group("/api/problem")
 	g.POST("/image", h.Image)
+	g.GET("/:id", h.GetProblemById)
+}
+
+func (h *Handler) GetProblemById(c *gin.Context) {
+	id := c.Param("id")
+	fmt.Println("Problem ID", id)
+
+	c.JSON(http.StatusOK, gin.H{
+		"title":      "New Problem",
+		"difficulty": gin.H{"label": "easy", "color": "teal"},
+		"rating":     4,
+		"tags":       []string{},
+		"sources":    []string{},
+		"question": gin.H{
+			"content": `<h2 style="text-align: center; margin-left: 0px!important;"><strong>Welcome to Code View</strong></h2>`,
+		},
+		"solution": []string{},
+	})
+
 }
 
 func (h *Handler) Image(c *gin.Context) {

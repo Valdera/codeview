@@ -10,12 +10,12 @@ import (
 	"time"
 
 	"codeview/config"
+	"codeview/persistence"
 
 	problemHandler "codeview/internal/handler/http/problem"
 	imageRepository "codeview/internal/repository/image"
 	problemService "codeview/internal/service/problem"
 
-	"cloud.google.com/go/storage"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -28,16 +28,13 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 
-	// TODO: Separate this to a proper definition
-	// Initialize google storage client
-	log.Printf("Connecting to Cloud Storage\n")
-	storage, err := storage.NewClient(context.Background())
+	db, err := persistence.Init(config)
 	if err != nil {
-		log.Fatalf("error creating cloud storage client: %v", err)
+		return
 	}
 
 	// Initialize application dependencies
-	imageRepo := imageRepository.New(storage, config.GC_BUCKET_NAME)
+	imageRepo := imageRepository.New(db.GCStorage)
 	problemService := problemService.New(imageRepo)
 	problemHandler.New(router, problemService, &problemHandler.Config{
 		MaxBodyBytes: config.MAX_BODY_BYTES,
@@ -71,7 +68,7 @@ func main() {
 	defer cancel()
 
 	// shutdown google storage data source
-	if err := storage.Close(); err != nil {
+	if err := db.Close(); err != nil {
 		log.Fatalf("A problem occurred gracefully shutting down data sources - error closing Cloud Storage client: %v\n", err)
 	}
 

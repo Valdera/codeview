@@ -4,29 +4,26 @@ import (
 	"codeview/domain"
 	"codeview/exception"
 	"codeview/internal/entity"
+	"codeview/persistence"
 	"context"
 	"fmt"
 	"io"
 	"log"
 	"mime/multipart"
-
-	"cloud.google.com/go/storage"
 )
 
 type imageRepository struct {
-	client     *storage.Client
-	bucketName string
+	storage *persistence.GCloudStorage
 }
 
-func New(gcClient *storage.Client, bucketName string) domain.ImageRepository {
+func New(gcClient *persistence.GCloudStorage) domain.ImageRepository {
 	return &imageRepository{
-		client:     gcClient,
-		bucketName: bucketName,
+		storage: gcClient,
 	}
 }
 
 func (r *imageRepository) AddImage(ctx context.Context, objName string, imageFile multipart.File) (*entity.Image, error) {
-	bckt := r.client.Bucket(r.bucketName)
+	bckt := r.storage.Client.Bucket(r.storage.BucketName)
 
 	object := bckt.Object(objName)
 	wc := object.NewWriter(ctx)
@@ -46,7 +43,7 @@ func (r *imageRepository) AddImage(ctx context.Context, objName string, imageFil
 
 	imageURL := fmt.Sprintf(
 		"https://storage.googleapis.com/%s/%s",
-		r.bucketName,
+		r.storage.BucketName,
 		objName,
 	)
 

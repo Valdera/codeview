@@ -22,7 +22,7 @@ func New(gcClient *persistence.GCloudStorage) domain.ImageRepository {
 	}
 }
 
-func (r *imageRepository) AddImage(ctx context.Context, objName string, imageFile multipart.File) (*entity.Image, error) {
+func (r *imageRepository) UploadImage(ctx context.Context, objName string, imageFile multipart.File) (*entity.Image, error) {
 	bckt := r.storage.Client.Bucket(r.storage.BucketName)
 
 	object := bckt.Object(objName)

@@ -16,13 +16,13 @@ type PostgresConfiguration struct {
 	Password     string
 }
 
-func dbUrlFromCfg(cfg PostgresConfiguration) string {
+func (cfg *PostgresConfiguration) URLString() string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", cfg.Host, cfg.User, cfg.Password, cfg.DatabaseName, cfg.Port)
 }
 
 func InitPostgres(cfg PostgresConfiguration) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN:                  dbUrlFromCfg(cfg),
+		DSN:                  cfg.URLString(),
 		PreferSimpleProtocol: true,
 	}), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),

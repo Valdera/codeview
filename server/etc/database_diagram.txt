@@ -1,0 +1,98 @@
+
+Table problem {
+  id int
+  title varchar
+  difficulty_id int
+  rating int 
+  created_at timestamp
+  updated_at timestamp
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Table difficulty {
+  id int
+  label varchar 
+  color varchar 
+  created_at timestamp
+  updated_at timestamp
+  Indexes {
+    (id) [pk]
+  }  
+}
+
+Table tag {
+  id int 
+  label varchar 
+  color varchar
+  created_at timestamp
+  updated_at timestamp
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Table problem_tag {
+  id int 
+  problem_id int 
+  tag_id int 
+  created_at timestamp
+  updated_at timestamp
+  Indexes {
+    (id) [pk]
+  }
+}
+
+
+Table source {
+  id int 
+  label varchar
+  color varchar 
+  created_at timestamp 
+  updated_at timestamp 
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Table problem_source {
+  id int 
+  problem_id int 
+  source_id int 
+  created_at timestamp 
+  updated_at timestamp 
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Table question {
+  id int
+  problem_id int
+  content text 
+  created_at timestamp
+  updated_at timestamp 
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Table solution {
+  id int
+  problem_id int
+  content text
+  created_at timestamp
+  updated_at timestamp
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Ref: solution.problem_id - problem.id   
+Ref: question.problem_id - problem.id   
+Ref: problem_tag.problem_id - problem.id   
+Ref: problem_tag.tag_id - tag.id
+Ref: problem_source.problem_id - problem.id   
+Ref: problem_source.source_id - source.id   
+Ref: problem.difficulty_id - difficulty.id   

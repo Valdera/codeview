@@ -1,9 +1,10 @@
-package handler
+package imagehandler
 
 import (
-	"codeview/domain"
-	"codeview/exception"
-	"codeview/validation"
+	"codeview/config"
+	"codeview/internal/exception"
+	"codeview/internal/service"
+	imageutil "codeview/utils/image"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,18 +13,14 @@ import (
 )
 
 type Handler struct {
-	imageService domain.ImageService
-	config       *Config
+	config       config.AppConfig
+	imageService service.ImageService
 }
 
-type Config struct {
-	MaxBodyBytes int64
-}
-
-func New(router *gin.Engine, imageService domain.ImageService, config *Config) {
+func New(config config.AppConfig, router *gin.Engine, imageService service.ImageService) {
 	h := &Handler{
-		imageService,
 		config,
+		imageService,
 	}
 
 	g := router.Group("/api/image")
@@ -65,7 +62,7 @@ func (h *Handler) Image(c *gin.Context) {
 	}
 
 	mimeType := imageFileHeader.Header.Get("Content-Type")
-	if valid := validation.IsAllowedImageType(mimeType); !valid {
+	if valid := imageutil.IsAllowedImageType(mimeType); !valid {
 		log.Println("Image is not an allowable mime-type")
 		e := exception.NewBadRequest("imageFile must be 'image/jpeg' or 'image/png'")
 		c.JSON(e.Status(), gin.H{

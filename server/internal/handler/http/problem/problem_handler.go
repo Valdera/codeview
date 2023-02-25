@@ -1,23 +1,21 @@
-package handler
+package problemhandler
 
 import (
-	"codeview/domain"
+	"codeview/config"
+	"codeview/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	problemService domain.ProblemService
-	config         *Config
+	config         config.AppConfig
+	problemService service.ProblemService
 }
 
-type Config struct {
-}
-
-func New(router *gin.Engine, problemService domain.ProblemService, config *Config) {
+func New(config config.AppConfig, router *gin.Engine, problemService service.ProblemService) {
 	h := &Handler{
-		problemService,
 		config,
+		problemService,
 	}
 
 	g := router.Group("/api/problem")

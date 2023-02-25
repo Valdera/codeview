@@ -1,8 +1,10 @@
 package main
 
 import (
+	"codeview/config"
 	"codeview/migration"
 	"codeview/server"
+	"log"
 
 	"fmt"
 	"os"
@@ -17,7 +19,7 @@ func main() {
 
 	switch cmd {
 	case "server":
-		server.Start()
+		ApplicationStart()
 	case "migrate-up-all":
 		migration.MigrateUp()
 	case "migrate-down-all":
@@ -27,4 +29,19 @@ func main() {
 	case "migrate-down":
 		migration.MigrateStepDown()
 	}
+}
+
+func ApplicationStart() {
+	log.Println("Starting server...")
+
+	cfg := config.Init()
+
+	cfg.LoadFromEnv()
+
+	server, err := server.Init(cfg)
+	if err != nil {
+		return
+	}
+
+	server.Start()
 }

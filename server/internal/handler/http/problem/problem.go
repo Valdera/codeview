@@ -1,8 +1,8 @@
-package handler
+package problemhandler
 
 import (
-	"codeview/exception"
-	"codeview/internal/dto"
+	"codeview/internal/dto/request"
+	"codeview/internal/exception"
 	"codeview/utils/pagination"
 	"fmt"
 	"net/http"
@@ -13,7 +13,7 @@ import (
 )
 
 func (h *Handler) CreateProblem(c *gin.Context) {
-	var body dto.ProblemCreate
+	var body request.ProblemCreate
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
@@ -145,7 +145,7 @@ func (h *Handler) GetProblemsByIds(c *gin.Context) {
 }
 
 func (h *Handler) UpdateProblemById(c *gin.Context) {
-	var body dto.ProblemUpdate
+	var body request.ProblemUpdate
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {

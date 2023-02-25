@@ -10,62 +10,70 @@ import (
 	"time"
 
 	"codeview/config"
-	"codeview/persistence"
+	"codeview/internal/persistence"
 
-	imageHandler "codeview/internal/handler/http/image"
-	problemHandler "codeview/internal/handler/http/problem"
-	imageRepository "codeview/internal/repository/image"
-	problemRepository "codeview/internal/repository/problem"
-	imageService "codeview/internal/service/image"
-	problemService "codeview/internal/service/problem"
+	imagehandler "codeview/internal/handler/http/image"
+	problemhandler "codeview/internal/handler/http/problem"
+	imagerepository "codeview/internal/repository/impl/image"
+	problemrepository "codeview/internal/repository/impl/problem"
+	imageservice "codeview/internal/service/impl/image"
+	problemservice "codeview/internal/service/impl/problem"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func Start() {
-	log.Println("Starting server...")
+type Server struct {
+	server *http.Server
+}
 
-	config := config.Get()
+func Init(cfg config.AppConfig) (*Server, error) {
 
 	router := gin.Default()
 	router.Use(cors.Default())
 
-	db, err := persistence.Init(config)
+	persistence, err := persistence.Init(cfg)
 	if err != nil {
-		return
+		return nil, err
 	}
 
+	defer persistence.Close()
+
 	// Initialize application repositories
-	imageRepo := imageRepository.New(db.GCStorage)
-	problemRepo := problemRepository.New(db.Postgres)
+	imageRepo := imagerepository.New(cfg, persistence.GCStorage)
+	problemRepo := problemrepository.New(cfg, persistence.Postgres)
 
 	// Initialize application services
-	problemService := problemService.New(problemRepo)
-	imageService := imageService.New(imageRepo)
+	problemService := problemservice.New(cfg, problemRepo)
+	imageService := imageservice.New(cfg, imageRepo)
 
 	// Initialize application handler
-	problemHandler.New(router, problemService, &problemHandler.Config{})
-	imageHandler.New(router, imageService, &imageHandler.Config{
-		MaxBodyBytes: config.MAX_BODY_BYTES,
-	})
+	problemhandler.New(cfg, router, problemService)
+	imagehandler.New(cfg, router, imageService)
 
-	srv := &http.Server{
-		Addr:    config.REST_PORT,
+	server := &http.Server{
+		Addr:    cfg.RestServer.Port,
 		Handler: router,
 	}
 
+	return &Server{
+		server: server,
+	}, nil
+
+}
+
+func (s *Server) Start() {
 	// Graceful server shutdown - https://github.com/gin-gonic/examples/blob/master/graceful-shutdown/graceful-shutdown/server.go
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Failed to initialize server: %v\n", err)
 		}
 	}()
 
-	log.Printf("Listening on port %v\n", srv.Addr)
+	log.Printf("Listening on port %v\n", s.server.Addr)
 
 	// Wait for kill signal of channel
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
@@ -77,14 +85,9 @@ func Start() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// shutdown google storage data source
-	if err := db.Close(); err != nil {
-		log.Fatalf("A problem occurred gracefully shutting down data sources - error closing Cloud Storage client: %v\n", err)
-	}
-
 	// Shutdown server
 	log.Println("Shutting down server...")
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := s.server.Shutdown(ctx); err != nil {
 		log.Fatalf("Server forced to shutdown: %v\n", err)
 	}
 }

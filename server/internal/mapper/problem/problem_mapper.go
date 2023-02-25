@@ -1,17 +1,17 @@
 package mapper
 
 import (
-	"codeview/internal/dto"
+	"codeview/internal/dto/response"
 	"codeview/internal/entity"
 )
 
-func ProblemToDTO(problem *entity.Problem) (*dto.ProblemResponse, error) {
+func ProblemToDTO(problem *entity.Problem) (*response.Problem, error) {
 	difficultyDto, err := DifficultyToDTO(&problem.Difficulty)
 	if err != nil {
 		return nil, err
 	}
 
-	tagsDto := make([]dto.TagResponse, len(problem.Tags))
+	tagsDto := make([]response.Tag, len(problem.Tags))
 	for i, tag := range problem.Tags {
 		tagDto, err := TagToDTO(&tag)
 		if err != nil {
@@ -20,7 +20,7 @@ func ProblemToDTO(problem *entity.Problem) (*dto.ProblemResponse, error) {
 		tagsDto[i] = *tagDto
 	}
 
-	sourcesDto := make([]dto.SourceResponse, len(problem.Sources))
+	sourcesDto := make([]response.Source, len(problem.Sources))
 	for i, source := range problem.Sources {
 		sourceDto, err := SourceToDTO(&source)
 		if err != nil {
@@ -29,7 +29,7 @@ func ProblemToDTO(problem *entity.Problem) (*dto.ProblemResponse, error) {
 		sourcesDto[i] = *sourceDto
 	}
 
-	solutionsDto := make([]dto.SolutionResponse, len(problem.Solutions))
+	solutionsDto := make([]response.Solution, len(problem.Solutions))
 	for i, solution := range problem.Solutions {
 		solutionDto, err := SolutionToDTO(&solution)
 		if err != nil {
@@ -38,7 +38,7 @@ func ProblemToDTO(problem *entity.Problem) (*dto.ProblemResponse, error) {
 		solutionsDto[i] = *solutionDto
 	}
 
-	questionsDto := make([]dto.QuestionResponse, len(problem.Questions))
+	questionsDto := make([]response.Question, len(problem.Questions))
 	for i, question := range problem.Questions {
 		questionDto, err := QuestionToDTO(&question)
 		if err != nil {
@@ -47,7 +47,7 @@ func ProblemToDTO(problem *entity.Problem) (*dto.ProblemResponse, error) {
 		questionsDto[i] = *questionDto
 	}
 
-	return &dto.ProblemResponse{
+	return &response.Problem{
 		ID:         problem.ID,
 		Title:      problem.Title,
 		Rating:     *problem.Rating,
@@ -61,8 +61,8 @@ func ProblemToDTO(problem *entity.Problem) (*dto.ProblemResponse, error) {
 	}, nil
 }
 
-func TagToDTO(tag *entity.Tag) (*dto.TagResponse, error) {
-	res := dto.TagResponse{
+func TagToDTO(tag *entity.Tag) (*response.Tag, error) {
+	res := response.Tag{
 		ID:        tag.ID,
 		Label:     tag.Label,
 		Color:     tag.Color,
@@ -73,8 +73,8 @@ func TagToDTO(tag *entity.Tag) (*dto.TagResponse, error) {
 	return &res, nil
 }
 
-func SourceToDTO(source *entity.Source) (*dto.SourceResponse, error) {
-	res := dto.SourceResponse{
+func SourceToDTO(source *entity.Source) (*response.Source, error) {
+	res := response.Source{
 		ID:        source.ID,
 		Label:     source.Label,
 		Color:     source.Color,
@@ -85,8 +85,8 @@ func SourceToDTO(source *entity.Source) (*dto.SourceResponse, error) {
 	return &res, nil
 }
 
-func DifficultyToDTO(difficulty *entity.Difficulty) (*dto.DifficultyResponse, error) {
-	res := dto.DifficultyResponse{
+func DifficultyToDTO(difficulty *entity.Difficulty) (*response.Difficulty, error) {
+	res := response.Difficulty{
 		ID:        difficulty.ID,
 		Label:     difficulty.Label,
 		Color:     difficulty.Color,
@@ -97,8 +97,8 @@ func DifficultyToDTO(difficulty *entity.Difficulty) (*dto.DifficultyResponse, er
 	return &res, nil
 }
 
-func SolutionToDTO(solution *entity.Solution) (*dto.SolutionResponse, error) {
-	res := dto.SolutionResponse{
+func SolutionToDTO(solution *entity.Solution) (*response.Solution, error) {
+	res := response.Solution{
 		ID:        solution.ID,
 		Content:   solution.Content,
 		CreatedAt: solution.CreatedAt,
@@ -108,8 +108,8 @@ func SolutionToDTO(solution *entity.Solution) (*dto.SolutionResponse, error) {
 	return &res, nil
 }
 
-func QuestionToDTO(question *entity.Question) (*dto.QuestionResponse, error) {
-	res := dto.QuestionResponse{
+func QuestionToDTO(question *entity.Question) (*response.Question, error) {
+	res := response.Question{
 		ID:        question.ID,
 		Content:   question.Content,
 		CreatedAt: question.CreatedAt,

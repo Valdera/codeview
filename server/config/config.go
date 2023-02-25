@@ -1,28 +1,59 @@
 package config
 
 import (
+	"os"
+
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
+	"gopkg.in/yaml.v2"
 )
 
-type Config struct {
-	REST_PORT            string `envconfig:"REST_PORT" default:":8080"`
-	POSTGRES_USER        string `envconfig:"POSTGRES_USER" default:""`
-	POSTGRES_PASSWORD    string `envconfig:"POSTGRES_PASSWORD" default:""`
-	POSTGRES_DBNAME      string `envconfig:"POSTGRES_DBNAME" default:""`
-	POSTGRES_HOST        string `envconfig:"POSTGRES_HOST" default:""`
-	POSTGRES_P0RT        string `envconfig:"POSTGRES_PORT" default:""`
-	GC_BUCKET_NAME       string `envconfig:"GC_BUCKET_NAME" default:""`
-	MAX_BODY_BYTES       int64  `envconfig:"MAX_BODY_BYTES" default:""`
-	TIMEOUT_DURATION     int64  `envconfig:"TIMEOUT_DURATION" default:"5"`
-	MIGRATION_FILES_PATH string `envconfig:"MIGRATION_FILES_PATH" default:""`
+type AppConfig struct {
+	// Server Configuration
+	RestServer struct {
+		Port string `yaml:"port" envconfig:"REST_PORT" default:":8080"`
+		Host string `yaml:"host" envconfig:"REST_HOST" default:"localhost"`
+	} `yaml:"rest"`
+
+	// Application Configuration
+	MaxBodyBytes int64 `yaml:"maxBodyBytes" envconfig:"MAX_BODY_BYTES" default:""`
+
+	// Persistence Configuration
+	Postgres  PostgresConfig `yaml:"postgres"`
+	GCStorage struct {
+		BucketName string `yaml:"bucketName" envconfig:"GC_BUCKET_NAME" default:""`
+	} `yaml:"gcstorage"`
+
+	// Migration Configuration
+	Migration struct {
+		FilesPath string `envconfig:"MIGRATION_FILES_PATH" default:""`
+	} `yaml:"migration"`
 }
 
-// Get to get defined configuration
-func Get() Config {
-	_ = godotenv.Load(".env")
-	cfg := Config{}
-	envconfig.MustProcess("", &cfg)
+func Init() AppConfig {
+	return AppConfig{}
+}
 
-	return cfg
+func (cfg *AppConfig) LoadFromEnv() error {
+	_ = godotenv.Load(".env")
+
+	envconfig.MustProcess("", cfg)
+
+	return nil
+}
+
+func (cfg *AppConfig) LoadFromYaml() error {
+	f, err := os.Open("config.yml")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	decoder := yaml.NewDecoder(f)
+	err = decoder.Decode(cfg)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

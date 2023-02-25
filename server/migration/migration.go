@@ -2,32 +2,23 @@ package migration
 
 import (
 	"codeview/config"
-	"codeview/persistence"
 	"database/sql"
 	"log"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	"gorm.io/gorm"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 )
 
-var database *gorm.DB
-
 func createMigrationInstance() (*migrate.Migrate, error) {
-	cfg := config.Get()
+	cfg := config.Init()
 
-	postgresCfg := persistence.PostgresConfiguration{
-		Host:         cfg.POSTGRES_HOST,
-		Port:         cfg.POSTGRES_P0RT,
-		User:         cfg.POSTGRES_USER,
-		Password:     cfg.POSTGRES_PASSWORD,
-		DatabaseName: cfg.POSTGRES_DBNAME,
-	}
+	cfg.LoadFromEnv()
 
-	db, err := sql.Open("postgres", postgresCfg.URLString())
+	dataSourceUrl := cfg.Postgres.GetDatabaseURL()
+	db, err := sql.Open("postgres", dataSourceUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +29,7 @@ func createMigrationInstance() (*migrate.Migrate, error) {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		cfg.MIGRATION_FILES_PATH,
+		cfg.Migration.FilesPath,
 		"postgres", driver)
 	if err != nil {
 		return nil, err

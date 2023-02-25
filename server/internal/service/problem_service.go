@@ -3,8 +3,7 @@ package service
 import (
 	"codeview/internal/dto/request"
 	"codeview/internal/dto/response"
-
-	"codeview/utils/pagination"
+	"codeview/internal/util/pagination"
 	"context"
 )
 

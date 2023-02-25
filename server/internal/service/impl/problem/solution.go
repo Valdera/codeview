@@ -4,8 +4,8 @@ import (
 	"codeview/internal/dto/request"
 	"codeview/internal/dto/response"
 	"codeview/internal/entity"
-	problemMapper "codeview/internal/mapper/problem"
-	"codeview/utils/pagination"
+	"codeview/internal/mapper"
+	"codeview/internal/util/pagination"
 	"context"
 	"log"
 )
@@ -18,7 +18,7 @@ func (s *problemService) CreateSolution(ctx context.Context, body *request.Solut
 		return nil, err
 	}
 
-	response, err := problemMapper.SolutionToDTO(solution)
+	response, err := mapper.SolutionToDTO(solution)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - CreateSolution : %v\n", err)
 		return nil, err
@@ -36,7 +36,7 @@ func (s *problemService) GetSolutions(ctx context.Context, p *pagination.Paginat
 
 	responses := make([]response.Solution, len(solutions))
 	for i, solution := range solutions {
-		response, err := problemMapper.SolutionToDTO(&solution)
+		response, err := mapper.SolutionToDTO(&solution)
 		if err != nil {
 			log.Printf("[ERROR] Problem Service - GetSolutions : %v\n", err)
 			return nil, err
@@ -54,7 +54,7 @@ func (s *problemService) GetSolutionById(ctx context.Context, id uint) (*respons
 		return nil, err
 	}
 
-	response, err := problemMapper.SolutionToDTO(solution)
+	response, err := mapper.SolutionToDTO(solution)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - GetSolutionById : %v\n", err)
 		return nil, err
@@ -72,7 +72,7 @@ func (s *problemService) GetSolutionsByIds(ctx context.Context, ids []uint, p *p
 
 	responses := make([]response.Solution, len(solutions))
 	for i, solution := range solutions {
-		response, err := problemMapper.SolutionToDTO(&solution)
+		response, err := mapper.SolutionToDTO(&solution)
 		if err != nil {
 			log.Printf("[ERROR] Problem Service - GetSolutionsByIds : %v\n", err)
 			return nil, err
@@ -92,7 +92,7 @@ func (s *problemService) UpdateSolutionById(ctx context.Context, id uint, body *
 		return nil, err
 	}
 
-	response, err := problemMapper.SolutionToDTO(solution)
+	response, err := mapper.SolutionToDTO(solution)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - UpdateSolutionById : %v\n", err)
 		return nil, err

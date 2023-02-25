@@ -2,8 +2,8 @@ package problemhandler
 
 import (
 	"codeview/internal/dto/request"
-	"codeview/internal/exception"
-	"codeview/utils/pagination"
+	"codeview/internal/util/exception"
+	"codeview/internal/util/pagination"
 	"fmt"
 	"net/http"
 	"strconv"

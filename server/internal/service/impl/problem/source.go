@@ -4,8 +4,8 @@ import (
 	"codeview/internal/dto/request"
 	"codeview/internal/dto/response"
 	"codeview/internal/entity"
-	problemMapper "codeview/internal/mapper/problem"
-	"codeview/utils/pagination"
+	"codeview/internal/mapper"
+	"codeview/internal/util/pagination"
 	"context"
 	"log"
 )
@@ -20,7 +20,7 @@ func (s *problemService) CreateSource(ctx context.Context, body *request.SourceC
 		return nil, err
 	}
 
-	response, err := problemMapper.SourceToDTO(source)
+	response, err := mapper.SourceToDTO(source)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - CreateSource : %v\n", err)
 		return nil, err
@@ -38,7 +38,7 @@ func (s *problemService) GetSources(ctx context.Context, p *pagination.Paginatio
 
 	responses := make([]response.Source, len(sources))
 	for i, source := range sources {
-		response, err := problemMapper.SourceToDTO(&source)
+		response, err := mapper.SourceToDTO(&source)
 		if err != nil {
 			log.Printf("[ERROR] Problem Service - GetSources : %v\n", err)
 			return nil, err
@@ -56,7 +56,7 @@ func (s *problemService) GetSourceById(ctx context.Context, id uint) (*response.
 		return nil, err
 	}
 
-	response, err := problemMapper.SourceToDTO(source)
+	response, err := mapper.SourceToDTO(source)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - GetSourceById : %v\n", err)
 		return nil, err
@@ -74,7 +74,7 @@ func (s *problemService) GetSourcesByIds(ctx context.Context, ids []uint, p *pag
 
 	responses := make([]response.Source, len(sources))
 	for i, source := range sources {
-		response, err := problemMapper.SourceToDTO(&source)
+		response, err := mapper.SourceToDTO(&source)
 		if err != nil {
 			log.Printf("[ERROR] Problem Service - GetSourcesByIds : %v\n", err)
 			return nil, err
@@ -95,7 +95,7 @@ func (s *problemService) UpdateSourceById(ctx context.Context, id uint, body *re
 		return nil, err
 	}
 
-	response, err := problemMapper.SourceToDTO(source)
+	response, err := mapper.SourceToDTO(source)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - UpdateSourceById : %v\n", err)
 		return nil, err

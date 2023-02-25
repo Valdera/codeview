@@ -2,7 +2,7 @@ package repository
 
 import (
 	"codeview/internal/entity"
-	"codeview/utils/pagination"
+	"codeview/internal/util/pagination"
 	"context"
 )
 

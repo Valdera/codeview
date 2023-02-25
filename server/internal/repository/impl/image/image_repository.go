@@ -3,8 +3,8 @@ package imagerepository
 import (
 	"codeview/config"
 	"codeview/internal/entity"
-	"codeview/internal/exception"
 	"codeview/internal/repository"
+	"codeview/internal/util/exception"
 
 	"context"
 	"fmt"

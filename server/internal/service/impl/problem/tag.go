@@ -4,8 +4,9 @@ import (
 	"codeview/internal/dto/request"
 	"codeview/internal/dto/response"
 	"codeview/internal/entity"
-	problemMapper "codeview/internal/mapper/problem"
-	"codeview/utils/pagination"
+	"codeview/internal/mapper"
+	"codeview/internal/util/pagination"
+
 	"context"
 	"log"
 )
@@ -20,7 +21,7 @@ func (s *problemService) CreateTag(ctx context.Context, body *request.TagCreate)
 		return nil, err
 	}
 
-	response, err := problemMapper.TagToDTO(tag)
+	response, err := mapper.TagToDTO(tag)
 	if err != nil {
 		log.Printf("[ERROR] Tag Service - CreateTag : %v\n", err)
 		return nil, err
@@ -38,7 +39,7 @@ func (s *problemService) GetTags(ctx context.Context, p *pagination.Pagination) 
 
 	responses := make([]response.Tag, len(tags))
 	for i, tag := range tags {
-		response, err := problemMapper.TagToDTO(&tag)
+		response, err := mapper.TagToDTO(&tag)
 		if err != nil {
 			log.Printf("[ERROR] Tag Service - GetTags : %v\n", err)
 			return nil, err
@@ -56,7 +57,7 @@ func (s *problemService) GetTagById(ctx context.Context, id uint) (*response.Tag
 		return nil, err
 	}
 
-	response, err := problemMapper.TagToDTO(tag)
+	response, err := mapper.TagToDTO(tag)
 	if err != nil {
 		log.Printf("[ERROR] Tag Service - GetTagById : %v\n", err)
 		return nil, err
@@ -74,7 +75,7 @@ func (s *problemService) GetTagsByIds(ctx context.Context, ids []uint, p *pagina
 
 	responses := make([]response.Tag, len(tags))
 	for i, tag := range tags {
-		response, err := problemMapper.TagToDTO(&tag)
+		response, err := mapper.TagToDTO(&tag)
 		if err != nil {
 			log.Printf("[ERROR] Tag Service - GetTagsByIds : %v\n", err)
 			return nil, err
@@ -95,7 +96,7 @@ func (s *problemService) UpdateTagById(ctx context.Context, id uint, body *reque
 		return nil, err
 	}
 
-	response, err := problemMapper.TagToDTO(tag)
+	response, err := mapper.TagToDTO(tag)
 	if err != nil {
 		log.Printf("[ERROR] Tag Service - UpdateTagById : %v\n", err)
 		return nil, err

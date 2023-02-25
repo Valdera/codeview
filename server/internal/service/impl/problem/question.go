@@ -4,8 +4,8 @@ import (
 	"codeview/internal/dto/request"
 	"codeview/internal/dto/response"
 	"codeview/internal/entity"
-	problemMapper "codeview/internal/mapper/problem"
-	"codeview/utils/pagination"
+	"codeview/internal/mapper"
+	"codeview/internal/util/pagination"
 	"context"
 	"log"
 )
@@ -18,7 +18,7 @@ func (s *problemService) CreateQuestion(ctx context.Context, body *request.Quest
 		return nil, err
 	}
 
-	response, err := problemMapper.QuestionToDTO(question)
+	response, err := mapper.QuestionToDTO(question)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - CreateQuestion : %v\n", err)
 		return nil, err
@@ -36,7 +36,7 @@ func (s *problemService) GetQuestions(ctx context.Context, p *pagination.Paginat
 
 	responses := make([]response.Question, len(questions))
 	for i, question := range questions {
-		response, err := problemMapper.QuestionToDTO(&question)
+		response, err := mapper.QuestionToDTO(&question)
 		if err != nil {
 			log.Printf("[ERROR] Problem Service - GetQuestions : %v\n", err)
 			return nil, err
@@ -54,7 +54,7 @@ func (s *problemService) GetQuestionById(ctx context.Context, id uint) (*respons
 		return nil, err
 	}
 
-	response, err := problemMapper.QuestionToDTO(question)
+	response, err := mapper.QuestionToDTO(question)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - GetQuestionById : %v\n", err)
 		return nil, err
@@ -72,7 +72,7 @@ func (s *problemService) GetQuestionsByIds(ctx context.Context, ids []uint, p *p
 
 	responses := make([]response.Question, len(questions))
 	for i, question := range questions {
-		response, err := problemMapper.QuestionToDTO(&question)
+		response, err := mapper.QuestionToDTO(&question)
 		if err != nil {
 			log.Printf("[ERROR] Problem Service - GetQuestionsByIds : %v\n", err)
 			return nil, err
@@ -92,7 +92,7 @@ func (s *problemService) UpdateQuestionById(ctx context.Context, id uint, body *
 		return nil, err
 	}
 
-	response, err := problemMapper.QuestionToDTO(question)
+	response, err := mapper.QuestionToDTO(question)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - UpdateQuestionById : %v\n", err)
 		return nil, err

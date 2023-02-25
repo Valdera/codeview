@@ -1,7 +1,7 @@
 package imageutil
 
 import (
-	"codeview/internal/exception"
+	"codeview/internal/util/exception"
 	"log"
 	"net/url"
 	"path"

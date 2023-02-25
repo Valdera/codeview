@@ -2,9 +2,9 @@ package imagehandler
 
 import (
 	"codeview/config"
-	"codeview/internal/exception"
 	"codeview/internal/service"
-	imageutil "codeview/utils/image"
+	"codeview/internal/util/exception"
+	imageutil "codeview/internal/util/image"
 	"fmt"
 	"log"
 	"net/http"

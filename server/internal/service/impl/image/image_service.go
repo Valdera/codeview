@@ -6,7 +6,7 @@ import (
 	"codeview/internal/service"
 
 	"codeview/internal/dto/response"
-	"codeview/internal/exception"
+	"codeview/internal/util/exception"
 	"context"
 	"fmt"
 	"log"

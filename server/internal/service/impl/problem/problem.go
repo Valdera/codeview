@@ -4,8 +4,8 @@ import (
 	"codeview/internal/dto/request"
 	"codeview/internal/dto/response"
 	"codeview/internal/entity"
-	problemMapper "codeview/internal/mapper/problem"
-	"codeview/utils/pagination"
+	"codeview/internal/mapper"
+	"codeview/internal/util/pagination"
 	"context"
 	"log"
 )
@@ -29,7 +29,7 @@ func (s *problemService) CreateProblem(ctx context.Context, body *request.Proble
 
 	problem.Difficulty = *difficulty
 
-	response, err := problemMapper.ProblemToDTO(problem)
+	response, err := mapper.ProblemToDTO(problem)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - CreateProblem : %v\n", err)
 		return nil, err
@@ -47,7 +47,7 @@ func (s *problemService) GetProblems(ctx context.Context, p *pagination.Paginati
 
 	responses := make([]response.Problem, len(problems))
 	for i, problem := range problems {
-		response, err := problemMapper.ProblemToDTO(&problem)
+		response, err := mapper.ProblemToDTO(&problem)
 		if err != nil {
 			log.Printf("[ERROR] Problem Service - GetProblems : %v\n", err)
 			return nil, err
@@ -65,7 +65,7 @@ func (s *problemService) GetProblemById(ctx context.Context, id uint) (*response
 		return nil, err
 	}
 
-	response, err := problemMapper.ProblemToDTO(problem)
+	response, err := mapper.ProblemToDTO(problem)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - GetProblemById : %v\n", err)
 		return nil, err
@@ -83,7 +83,7 @@ func (s *problemService) GetProblemsByIds(ctx context.Context, ids []uint, p *pa
 
 	responses := make([]response.Problem, len(problems))
 	for i, problem := range problems {
-		response, err := problemMapper.ProblemToDTO(&problem)
+		response, err := mapper.ProblemToDTO(&problem)
 		if err != nil {
 			log.Printf("[ERROR] Problem Service - GetProblemsByIds : %v\n", err)
 			return nil, err
@@ -105,7 +105,7 @@ func (s *problemService) UpdateProblemById(ctx context.Context, id uint, body *r
 		return nil, err
 	}
 
-	response, err := problemMapper.ProblemToDTO(problem)
+	response, err := mapper.ProblemToDTO(problem)
 	if err != nil {
 		log.Printf("[ERROR] Problem Service - UpdateProblemById : %v\n", err)
 		return nil, err

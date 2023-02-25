@@ -2,7 +2,7 @@ package problemrepository
 
 import (
 	"codeview/internal/entity"
-	"codeview/utils/pagination"
+	"codeview/internal/util/pagination"
 	"context"
 	"fmt"
 	"log"

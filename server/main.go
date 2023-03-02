@@ -37,6 +37,7 @@ func ApplicationStart() {
 	cfg := config.Init()
 
 	cfg.LoadFromEnv()
+	cfg.LoadCerts()
 
 	server, err := server.Init(cfg)
 	if err != nil {

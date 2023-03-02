@@ -10,21 +10,19 @@ import (
 	"time"
 
 	"codeview/config"
+	handler "codeview/internal/handler/http"
 	"codeview/internal/persistence"
-
-	imagehandler "codeview/internal/handler/http/image"
-	problemhandler "codeview/internal/handler/http/problem"
-	imagerepository "codeview/internal/repository/impl/image"
-	problemrepository "codeview/internal/repository/impl/problem"
-	imageservice "codeview/internal/service/impl/image"
-	problemservice "codeview/internal/service/impl/problem"
+	repository "codeview/internal/repository/impl"
+	service "codeview/internal/service/impl"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	server *http.Server
+	server      *http.Server
+	persistence *persistence.Persistence
 }
 
 func Init(cfg config.AppConfig) (*Server, error) {
@@ -37,19 +35,22 @@ func Init(cfg config.AppConfig) (*Server, error) {
 		return nil, err
 	}
 
-	defer persistence.Close()
+	router.Use(sessions.Sessions("sessions", persistence.SessionStore))
 
 	// Initialize application repositories
-	imageRepo := imagerepository.New(cfg, persistence.GCStorage)
-	problemRepo := problemrepository.New(cfg, persistence.Postgres)
+	imageRepo := repository.NewImageRepository(cfg, persistence.GCStorage)
+	problemRepo := repository.NewProblemRepository(cfg, persistence.Postgres)
+	userRepo := repository.NewUserRepository(cfg, persistence.Postgres)
 
 	// Initialize application services
-	problemService := problemservice.New(cfg, problemRepo)
-	imageService := imageservice.New(cfg, imageRepo)
+	problemService := service.NewProblemService(cfg, problemRepo)
+	imageService := service.NewImageService(cfg, imageRepo)
+	authservice := service.NewAuthService(cfg, userRepo)
 
 	// Initialize application handler
-	problemhandler.New(cfg, router, problemService)
-	imagehandler.New(cfg, router, imageService)
+	handler.InitProblemHandler(cfg, router, problemService)
+	handler.InitImageHandler(cfg, router, imageService)
+	handler.InitAuthHandler(cfg, router, authservice)
 
 	server := &http.Server{
 		Addr:    cfg.RestServer.Port,
@@ -57,7 +58,8 @@ func Init(cfg config.AppConfig) (*Server, error) {
 	}
 
 	return &Server{
-		server: server,
+		server:      server,
+		persistence: persistence,
 	}, nil
 
 }
@@ -84,6 +86,11 @@ func (s *Server) Start() {
 	// the request it is currently handling
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	// Close persistence connection
+	if err := s.persistence.Close(); err != nil {
+		log.Fatalf("A problem occurred gracefully shutting down data sources: %v\n", err)
+	}
 
 	// Shutdown server
 	log.Println("Shutting down server...")

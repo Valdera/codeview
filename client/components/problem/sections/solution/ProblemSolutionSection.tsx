@@ -4,11 +4,15 @@ import RichTextEditor from '@components/rte/RichTextEditor';
 import { useProblemStore } from '@lib/stores';
 import { Solution } from '@lib/types/problem';
 
-export interface ISolutionSection {
+export interface IProblemSolutionSection {
   solution: Solution;
+  disabled?: boolean;
 }
 
-const SolutionSection: React.FC<ISolutionSection> = ({ solution }) => {
+const ProblemSolutionSection: React.FC<IProblemSolutionSection> = ({
+  solution,
+  disabled = false,
+}) => {
   const { deleteSolution, updateSolution } = useProblemStore();
 
   return (
@@ -39,11 +43,12 @@ const SolutionSection: React.FC<ISolutionSection> = ({ solution }) => {
       <RichTextEditor
         content={solution.content}
         onSave={(content) => {
-          updateSolution({ id: solution.id, content: content });
+          updateSolution(solution.id, { content: content });
         }}
+        disabled={disabled}
       />
     </Box>
   );
 };
 
-export default SolutionSection;
+export default ProblemSolutionSection;

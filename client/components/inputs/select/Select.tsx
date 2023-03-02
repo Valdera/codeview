@@ -2,11 +2,9 @@ import { Tag, Text } from '@chakra-ui/react';
 import { Group, Select as MantineSelect } from '@mantine/core';
 import { forwardRef } from 'react';
 
-type SupportedColor = 'teal' | 'yellow' | 'red';
-
 export interface ISelect {
   value?: string | null;
-  data: { value: string; label: string; color: SupportedColor }[];
+  data: { value: string; label: string; color: string }[];
   disabled?: boolean;
   label?: string;
   placeholder?: string;
@@ -45,41 +43,31 @@ const Select: React.FC<ISelect> = ({
       readOnly={disabled}
       onChange={onChange}
       styles={(theme) => ({
-        item: {
-          '&:[data-selected]': {
-            color: 'red',
-          },
-          color: '#000',
-          dataSelected: {
-            color: 'red',
-          },
-          '.data-selected': { color: 'red' },
-          '&:active': {
-            color: 'red',
-          },
-          '&:data-selected': {
-            color: 'red',
-          },
-        },
         itemsWrapper: {
           padding: '0',
         },
         input: {
           backgroundColor: value
             ? theme.colors[getColorFromValue(value)][1]
-            : theme.colors.gray[1],
+            : '#EDF2F7',
           color: value
             ? theme.colors[getColorFromValue(value)][9]
             : theme.colors.gray[9],
-          fontWeight: 500,
+          fontWeight: 400,
+          outline: 'none',
+          borderColor: 'transparent',
           '&:focus': {
-            outline: 'none',
-            borderColor: 'transparent',
+            borderColor: theme.colors.primary[7],
+            transition: '.5s all',
           },
           '&:focus-within': {
-            outline: 'none',
-            borderColor: 'transparent',
+            borderColor: theme.colors.primary[7],
+            transition: '.5s all',
           },
+        },
+        label: {
+          marginBottom: '5px',
+          color: theme.colors.primary[7],
         },
       })}
       className={'w-full'}

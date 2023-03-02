@@ -2,31 +2,25 @@ import { Metadata, Problem, Question, Solution } from '@lib/types/problem';
 import { StateCreator } from 'zustand';
 
 export interface ProblemSlice {
-  problem: Problem;
+  problem: Problem | null;
+  load: (problem: Problem) => void;
+  updateProblem: (body: Metadata) => void;
   createSolution: () => void;
+  updateSolution: (id: string, body: { content: string }) => void;
   deleteSolution: (id: string) => void;
-  updateSolution: (updatedSolution: Solution) => void;
-  updateQuestion: (updatedQuestion: Question) => void;
-  updateMetadata: (updatedMetadata: Partial<Metadata>) => void;
+  createQuestion: () => void;
+  updateQuestion: (body: { content: string }) => void;
 }
 
 export const createProblemSlice: StateCreator<ProblemSlice> = (set, get) => {
-  const initialProblem: Problem = {
-    title: 'New Problem',
-    difficulty: { id: '' },
-    rating: 0,
-    tags: [],
-    sources: [],
-    question: {
-      content: `<h2 style="text-align: center; margin-left: 0px!important;"><strong>Welcome to Code View</strong></h2>`,
-    },
-    solutions: [],
-  };
-
   return {
-    problem: initialProblem,
+    problem: null,
+    load: (problem) => {
+      set({ problem });
+    },
     createSolution: () => {
       const problem = get().problem;
+      if (!problem) return;
 
       // TODO: create solution through backend
 
@@ -35,42 +29,67 @@ export const createProblemSlice: StateCreator<ProblemSlice> = (set, get) => {
         content: `<h2 style="text-align: center; margin-left: 0px!important;"><strong>Problem Solution</strong></h2>`,
       };
 
-      problem.solutions.push(solution);
+      problem.solutions?.push(solution);
 
       set({ problem });
     },
-    deleteSolution: (id: string) => {
+    deleteSolution: (id) => {
       const problem = get().problem;
+      if (!problem) return;
 
-      problem.solutions = problem.solutions.filter(
+      // TODO: delete solution through backend
+
+      problem.solutions = problem.solutions?.filter(
         (solution) => solution.id != id
       );
 
       set({ problem });
     },
-    updateSolution: (updatedSolution: Solution) => {
+    updateSolution: (id, { content }) => {
       const problem = get().problem;
+      if (!problem) return;
 
-      problem.solutions = problem.solutions.map((solution) => {
-        if (solution.id == updatedSolution.id) {
-          return updatedSolution;
+      problem.solutions = problem.solutions?.map((solution) => {
+        if (solution.id == id) {
+          return { ...solution, content: content };
         }
         return solution;
       });
 
       set({ problem });
     },
-    updateQuestion: (updatedQuestion: Question) => {
+    createQuestion: () => {
       const problem = get().problem;
+      if (!problem) return;
 
-      problem.question = updatedQuestion;
+      // TODO: Create question through backend
+
+      const question: Question = {
+        id: Date.now().toString(),
+        content: `<h2 style="text-align: center; margin-left: 0px!important;"><strong>Problem Solution</strong></h2>`,
+      };
+
+      problem.question = question;
 
       set({ problem });
     },
-    updateMetadata: (updatedMetadata: Partial<Metadata>) => {
+    updateQuestion: ({ content }) => {
       const problem = get().problem;
+      if (!problem || !problem.question) return;
 
-      console.log(updatedMetadata);
+      problem.question.content = content;
+
+      set({ problem });
+    },
+    updateProblem: ({ title, difficulty, rating, sources, tags }) => {
+      const problem = get().problem;
+      if (!problem) return;
+
+      problem.title = title;
+      problem.difficulty = difficulty;
+      problem.rating = rating;
+      problem.sources = sources;
+      problem.tags = tags;
 
       set({ problem });
     },

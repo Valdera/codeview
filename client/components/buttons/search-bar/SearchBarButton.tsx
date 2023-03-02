@@ -20,7 +20,7 @@ const SearchBarButton: React.FC<ISearchBarButton> = ({
       <InputLeftElement>
         <SearchIcon color={'gray.500'} />
       </InputLeftElement>
-      <InputRightElement width={'7rem'}>
+      <InputRightElement display={{ base: 'none', sm: 'flex' }} width={'7rem'}>
         <Kbd>shift</Kbd> + <Kbd>H</Kbd>
       </InputRightElement>
       <Input

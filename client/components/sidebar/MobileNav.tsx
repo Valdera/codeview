@@ -25,7 +25,7 @@ const MobileNav = ({ onOpen, onSearchClick, ...rest }: MobileProps) => {
       templateColumns={{ base: 'max-content 1fr', md: '1fr max-content' }}
       bg={useColorModeValue('white', 'gray.900')}
       borderBottomWidth={'1px'}
-      borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
+      borderBottomColor={useColorModeValue('primary.100', 'gray.700')}
       justifyContent={{ base: 'space-between', md: 'flex-end' }}
       {...rest}
     >

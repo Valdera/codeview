@@ -52,15 +52,30 @@ const MultiSelect: React.FC<IMultiSelect> = ({
         className={'w-full'}
         styles={(theme) => ({
           input: {
-            backgroundColor: theme.colors.gray[1],
+            backgroundColor: '#EDF2F7',
             color: theme.colors.gray[9],
             width: '100%',
+            fontWeight: 400,
+            outline: 'none',
+            borderColor: 'transparent',
+            '&:focus': {
+              borderColor: theme.colors.primary[7],
+              transition: '.5s all',
+            },
+            '&:focus-within': {
+              borderColor: theme.colors.primary[7],
+              transition: '.5s all',
+            },
           },
           wrapper: {
             width: '100%',
           },
           searchInput: {
             width: '100%',
+          },
+          label: {
+            marginBottom: '5px',
+            color: theme.colors.primary[7],
           },
         })}
       />

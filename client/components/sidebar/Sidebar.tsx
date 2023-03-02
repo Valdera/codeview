@@ -2,6 +2,7 @@ import {
   Box,
   BoxProps,
   CloseButton,
+  Code,
   Drawer,
   DrawerContent,
   Flex,
@@ -90,7 +91,7 @@ const Sidebar: React.FC<ISidebar> = ({
     >
       <Box
         minH={'100vh'}
-        bg={useColorModeValue('gray.100', 'gray.900')}
+        bg={useColorModeValue('primary.50', 'gray.900')}
         {...rest}
       >
         <SidebarContent
@@ -137,7 +138,7 @@ const SidebarContent: React.FC<ISidebarContent> = ({
       transition={'3s ease'}
       bg={useColorModeValue('white', 'gray.900')}
       borderRight={'1px'}
-      borderRightColor={useColorModeValue('gray.200', 'gray.700')}
+      borderRightColor={useColorModeValue('primary.100', 'gray.700')}
       w={{ base: 'full', md: 60 }}
       pos={'fixed'}
       h={'full'}
@@ -152,6 +153,7 @@ const SidebarContent: React.FC<ISidebarContent> = ({
         <Text fontSize={'2xl'} fontFamily={'monospace'} fontWeight={'bold'}>
           CodeView
         </Text>
+        <Code>1.0.0</Code>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {linkItems.map((link) => (

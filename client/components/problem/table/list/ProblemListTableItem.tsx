@@ -1,45 +1,35 @@
 import { Grid, Tag, Td, Tr } from '@chakra-ui/react';
 import Rating from '@components/inputs/rating/Rating';
+import { Problem } from '@lib/types';
 import Link from 'next/link';
 
-export interface IProblemItemList {
-  title: string;
-  slug: string;
-  difficulty: { label: string; color: string };
-  tags: { label: string; color: string }[];
-  sources: { label: string; color: string }[];
-  rating: 0 | 1 | 2 | 3 | 4 | 5;
+export interface IProblemListTableItem {
+  data: Problem;
 }
 
-const ProblemItemList: React.FC<IProblemItemList> = ({
-  title,
-  slug,
-  difficulty,
-  tags,
-  sources,
-  rating,
-}) => {
+const ProblemListTableItem: React.FC<IProblemListTableItem> = ({ data }) => {
   return (
     <Tr>
       <Td>
         <Link
-          href={slug}
+          href={data.slug ?? '/'}
           className={'text-blue-400 hover:text-blue-600 transition-all'}
         >
-          {title}
+          {data.title}
         </Link>
       </Td>
-      <Td display={{ base: 'none', sm: 'table-cell' }}>
+      <Td display={{ base: 'table-cell' }}>
         <Tag
-          colorScheme={difficulty.color}
+          colorScheme={data.difficulty.color}
           width={'100px'}
           display={'flex'}
           justifyContent={'center'}
+          fontWeight={'bold'}
         >
-          {difficulty.label}
+          {data.difficulty.label.toUpperCase()}
         </Tag>
       </Td>
-      <Td display={{ base: 'none', md: 'table-cell' }}>
+      <Td display={{ base: 'table-cell' }}>
         <Grid
           display={'grid'}
           gap={2}
@@ -49,7 +39,7 @@ const ProblemItemList: React.FC<IProblemItemList> = ({
             xl: 'repeat(3, max-content)',
           }}
         >
-          {tags.map((tag) => (
+          {data.tags.map((tag) => (
             <Tag
               key={tag.label}
               width={'100px'}
@@ -63,7 +53,7 @@ const ProblemItemList: React.FC<IProblemItemList> = ({
           ))}
         </Grid>
       </Td>
-      <Td display={{ base: 'none', lg: 'table-cell' }}>
+      <Td display={{ base: 'table-cell' }}>
         <Grid
           display={'grid'}
           gap={2}
@@ -72,7 +62,7 @@ const ProblemItemList: React.FC<IProblemItemList> = ({
             xl: 'repeat(2, max-content)',
           }}
         >
-          {sources.map((source) => (
+          {data.sources.map((source) => (
             <Tag
               key={source.label}
               width={'100px'}
@@ -86,11 +76,11 @@ const ProblemItemList: React.FC<IProblemItemList> = ({
           ))}
         </Grid>
       </Td>
-      <Td display={{ base: 'none', '2xl': 'table-cell' }}>
-        <Rating value={rating} disabled={true} />
+      <Td display={{ base: 'table-cell' }}>
+        <Rating value={data.rating} disabled={true} />
       </Td>
     </Tr>
   );
 };
 
-export default ProblemItemList;
+export default ProblemListTableItem;

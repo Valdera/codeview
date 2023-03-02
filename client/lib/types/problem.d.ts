@@ -1,9 +1,13 @@
 export interface Source {
   id: string;
+  label: string;
+  color: string;
 }
 
 export interface Tag {
   id: string;
+  label: string;
+  color: string;
 }
 
 export interface Solution {
@@ -13,9 +17,12 @@ export interface Solution {
 
 export interface Difficulty {
   id: string;
+  label: string;
+  color: string;
 }
 
 export interface Question {
+  id: string;
   content: string;
 }
 
@@ -30,6 +37,8 @@ export interface Metadata {
 }
 
 export type Problem = Metadata & {
-  question: Question;
-  solutions: Solution[];
+  id: string;
+  slug?: string;
+  question?: Question;
+  solutions?: Solution[];
 };

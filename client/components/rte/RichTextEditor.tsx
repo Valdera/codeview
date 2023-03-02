@@ -46,18 +46,16 @@ test</code></pre>`;
 export interface IRichTextEditor {
   content?: string;
   disabled?: boolean;
-  defaultEditable?: boolean;
   onSave?: (content: string) => void;
 }
 
 const RichTextEditor: React.FC<IRichTextEditor> = ({
   content = defaultContent,
-  defaultEditable = true,
   disabled = false,
   onSave = (_content) => {},
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [editable, setEditable] = useState(defaultEditable);
+  const [isEditable, setIsEditable] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -95,7 +93,7 @@ const RichTextEditor: React.FC<IRichTextEditor> = ({
       Indent,
     ],
     content,
-    editable: !disabled && editable,
+    editable: !disabled && isEditable,
   });
 
   if (!editor) {
@@ -108,7 +106,8 @@ const RichTextEditor: React.FC<IRichTextEditor> = ({
     onSave(editor.getHTML().toString());
 
     editor.setEditable(false);
-    setEditable(false);
+
+    setIsEditable(false);
     setIsLoading(false);
   };
 
@@ -147,7 +146,7 @@ const RichTextEditor: React.FC<IRichTextEditor> = ({
       <MantineRTE editor={editor} className={cn(s.rte, 'relative')}>
         {!disabled && (
           <MantineRTE.Toolbar>
-            {editable ? (
+            {isEditable ? (
               <>
                 <MantineRTE.ControlsGroup>
                   <MantineRTE.Bold />
@@ -211,7 +210,7 @@ const RichTextEditor: React.FC<IRichTextEditor> = ({
                 icon={<EditIcon />}
                 onClick={() => {
                   editor.setEditable(true);
-                  setEditable(true);
+                  setIsEditable(true);
                 }}
               />
             )}

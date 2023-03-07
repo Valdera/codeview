@@ -9,57 +9,41 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import MultiSelect from '@components/inputs/multi-select/MultiSelect';
-import Rating from '@components/inputs/rating/Rating';
-import Select from '@components/inputs/select/Select';
 import TextInput from '@components/inputs/text/TextInput';
-import { useProblemStore } from '@lib/stores';
-import { Difficulty, Source, Tag } from '@lib/types';
+import { Note, Tag } from '@lib/types';
 import { Formik } from 'formik';
 import { useState } from 'react';
 
-export interface IProblemMetadataSection {
+export interface INoteMetadataSection {
   data: {
-    difficulties?: Difficulty[];
-    sources?: Source[];
+    note: Note;
     tags?: Tag[];
   };
   disabled?: boolean;
 }
 
-const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
+const NoteMetadataSection: React.FC<INoteMetadataSection> = ({
   data,
   disabled = false,
 }) => {
-  const [difficulties, setDifficulties] = useState<Difficulty[]>(
-    data.difficulties ?? []
-  );
-  const [sources, setSources] = useState<Source[]>(data.sources ?? []);
   const [tags, setTags] = useState<Tag[]>(data.tags ?? []);
-
   const [isEditable, setIsEditable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { problem } = useProblemStore();
-  if (!problem) return <></>;
+  const note = data.note;
 
   const initialValues: {
     title: string;
-    difficulty: string;
     tags: string[];
-    sources: string[];
-    rating: 0 | 1 | 2 | 3 | 4 | 5;
   } = {
-    title: problem.title,
-    difficulty: problem.difficulty.id,
-    tags: problem.tags.map((s) => s.id),
-    sources: problem.sources.map((s) => s.id),
-    rating: problem.rating,
+    title: note.title,
+    tags: note.tags.map((s) => s.id),
   };
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(values, _actions) => {
+      onSubmit={(values, _action) => {
         console.log(values);
       }}
     >
@@ -72,7 +56,7 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
               display={'flex'}
               alignItems={'center'}
             >
-              {!disabled && (
+              {!disabled ? (
                 <Heading as={'h3'} size={'md'}>
                   <Highlight
                     query={'metadata'}
@@ -86,6 +70,8 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
                     Metadata
                   </Highlight>
                 </Heading>
+              ) : (
+                <Heading>{note.title}</Heading>
               )}
               {!disabled && (
                 <>
@@ -115,17 +101,17 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
               )}
             </HStack>
             <Grid
-              templateColumns={{
-                base: '1fr 1fr',
-                md: '1fr 1fr 3fr',
-                lg: '1fr max-content 2fr 3fr',
-              }}
+              gridTemplateColumns={
+                disabled
+                  ? { base: '1fr', md: '400px' }
+                  : { base: '1fr', md: '3fr 1fr' }
+              }
               gap={'5'}
               alignItems={'start'}
               justifyContent={'start'}
             >
-              <GridItem colSpan={{ base: 2, md: 3, lg: 4 }}>
-                {!disabled ? (
+              {!disabled && (
+                <GridItem>
                   <TextInput
                     value={props.values.title}
                     onChange={(evt) =>
@@ -134,47 +120,9 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
                     label={'Title'}
                     placeholder={'Search problems'}
                   />
-                ) : (
-                  <Heading>{problem.title}</Heading>
-                )}
-              </GridItem>
+                </GridItem>
+              )}
               <GridItem>
-                <Select
-                  data={difficulties.map((d) => ({
-                    value: d.id,
-                    label: d.label,
-                    color: d.color,
-                  }))}
-                  value={props.values.difficulty}
-                  onChange={(value) => props.setFieldValue('difficulty', value)}
-                  label={'Difficulty'}
-                  placeholder={'Select difficulty'}
-                  disabled={disabled || !isEditable}
-                />
-              </GridItem>
-              <GridItem>
-                <Rating
-                  value={props.values.rating}
-                  onChange={(value) => props.setFieldValue('rating', value)}
-                  label={'Rating'}
-                  disabled={disabled || !isEditable}
-                />
-              </GridItem>
-              <GridItem colSpan={{ base: 2, md: 1 }}>
-                <MultiSelect
-                  data={sources.map((s) => ({
-                    value: s.id,
-                    label: s.label,
-                    color: s.color,
-                  }))}
-                  value={props.values.sources}
-                  onChange={(value) => props.setFieldValue('sources', value)}
-                  label={'Sources'}
-                  placeholder={'Select sources'}
-                  disabled={disabled || !isEditable}
-                />
-              </GridItem>
-              <GridItem colSpan={{ base: 2, md: 3, lg: 1 }}>
                 <MultiSelect
                   data={tags.map((t) => ({
                     value: t.id,
@@ -196,4 +144,4 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
   );
 };
 
-export default ProblemMetadataSection;
+export default NoteMetadataSection;

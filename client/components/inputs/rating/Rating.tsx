@@ -24,6 +24,7 @@ const Rating: React.FC<IRating> = ({
           fontSize={'sm'}
           fontWeight={'500'}
           fontFamily={'heading'}
+          color={'primary.700'}
         >
           Rating
         </Text>

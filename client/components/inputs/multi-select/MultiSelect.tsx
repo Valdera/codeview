@@ -40,7 +40,7 @@ const MultiSelect: React.FC<IMultiSelect> = ({
         searchable
         creatable={creatable}
         valueComponent={(props) => {
-          return <Value color={props.color} {...props} />;
+          return <Value color={props.color} {...props} disabled={disabled} />;
         }}
         readOnly={disabled}
         transitionDuration={150}
@@ -84,29 +84,33 @@ const MultiSelect: React.FC<IMultiSelect> = ({
 };
 
 const Value: React.FC<
-  MultiSelectValueProps & { value: string; color: string }
-> = ({ color, label, onRemove, ...others }) => {
+  MultiSelectValueProps & { value: string; color: string; disabled?: boolean }
+> = ({ color, label, onRemove, disabled, ...others }) => {
+  console.log(disabled);
   return (
     <div className={others.className}>
       <Flex
         alignItems={'center'}
         justifyContent={'center'}
         backgroundColor={color}
-        padding={'2px'}
+        padding={'3px'}
         paddingLeft={'3'}
+        paddingRight={disabled ? '3' : '0'}
         borderRadius={'md'}
       >
         <Text color={'white'} lineHeight={'1'} fontWeight={'medium'}>
           {label}
         </Text>
-        <CloseButton
-          onMouseDown={onRemove}
-          variant={'transparent'}
-          size={20}
-          iconSize={12}
-          tabIndex={-1}
-          className={'text-white font-medium'}
-        />
+        {!disabled && (
+          <CloseButton
+            onMouseDown={onRemove}
+            variant={'transparent'}
+            size={20}
+            iconSize={12}
+            tabIndex={-1}
+            className={'text-white font-medium'}
+          />
+        )}
       </Flex>
     </div>
   );

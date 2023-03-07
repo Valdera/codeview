@@ -4,6 +4,7 @@ import Select from '@components/inputs/select/Select';
 import TextInput from '@components/inputs/text/TextInput';
 import { Difficulty, Source, Tag } from '@lib/types/';
 import { Accordion, createStyles } from '@mantine/core';
+import { IconSearch } from '@tabler/icons';
 import { Formik } from 'formik';
 import { ReactNode, useState } from 'react';
 
@@ -50,7 +51,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export interface IProblemFilter extends BoxProps {
+export interface IProblemFilterSection extends BoxProps {
   data: {
     difficulties?: Difficulty[];
     sources?: Source[];
@@ -60,7 +61,7 @@ export interface IProblemFilter extends BoxProps {
   wrapper?: 'accordion' | 'box';
 }
 
-const ProblemFilter: React.FC<IProblemFilter> = ({
+const ProblemFilterSection: React.FC<IProblemFilterSection> = ({
   data,
   wrapper = 'box',
   ...props
@@ -99,18 +100,6 @@ const ProblemFilter: React.FC<IProblemFilter> = ({
               defaultValue={'customization'}
               classNames={classes}
               className={classes.root}
-              // styles={(theme) => ({
-              //   panel: {
-              //     width: '100%',
-              //     color: theme.colors.primary[7],
-              //   },
-              //   control: {
-              //     width: '100%',
-              //   },
-              //   item: {
-              //     width: '100%',
-              //   },
-              // })}
             >
               <Accordion.Item value={'customization'}>
                 <Accordion.Control>Query Problem</Accordion.Control>
@@ -204,6 +193,7 @@ const ProblemFilter: React.FC<IProblemFilter> = ({
                 }
                 label={'Title'}
                 placeholder={'Search problems'}
+                icon={<IconSearch size={16} />}
               />
             </GridItem>
             {/* ON CHANGE SEARCH */}
@@ -228,4 +218,4 @@ const ProblemFilter: React.FC<IProblemFilter> = ({
   );
 };
 
-export default ProblemFilter;
+export default ProblemFilterSection;

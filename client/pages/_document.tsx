@@ -1,6 +1,24 @@
-import Document, { Head, Html, Main, NextScript } from 'next/document';
+import Document, {
+  DocumentContext,
+  DocumentInitialProps,
+  Head,
+  Html,
+  Main,
+  NextScript,
+} from 'next/document';
+import { resetServerContext } from 'react-beautiful-dnd';
 
 class MyDocument extends Document {
+  static async getInitialProps(
+    ctx: DocumentContext
+  ): Promise<DocumentInitialProps> {
+    const props = await Document.getInitialProps(ctx);
+
+    resetServerContext();
+
+    return { ...props };
+  }
+
   render() {
     return (
       <Html>

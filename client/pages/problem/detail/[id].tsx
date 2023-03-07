@@ -1,5 +1,4 @@
-import { AddIcon } from '@chakra-ui/icons';
-import { Button, VStack } from '@chakra-ui/react';
+import { VStack } from '@chakra-ui/react';
 import PrimaryLayout from '@components/layouts/primary/PrimaryLayout';
 import ProblemMetadataSection from '@components/problem/sections/metadata/ProblemMetadataSection';
 import ProblemQuestionSection from '@components/problem/sections/question/ProblemQuestionSection';
@@ -10,14 +9,14 @@ import { NextPageWithLayout } from '@pages/page';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useEffect } from 'react';
 
-interface IProblemEditPage {
+interface IProblemDetailPage {
   problem: Problem;
   difficulties: Difficulty[];
   sources: Source[];
   tags: Tag[];
 }
 
-const ProblemEditPage: NextPageWithLayout<IProblemEditPage> = ({
+const ProblemDetailPage: NextPageWithLayout<IProblemDetailPage> = ({
   problem: initialProblem,
   difficulties,
   sources,
@@ -37,40 +36,29 @@ const ProblemEditPage: NextPageWithLayout<IProblemEditPage> = ({
         <VStack width={'full'} gap={5}>
           <ProblemMetadataSection
             data={{ difficulties, sources, tags }}
-            disabled={false}
+            disabled={true}
           />
-          <ProblemQuestionSection
-            question={problem.question}
-            disabled={false}
-          />
+          <ProblemQuestionSection question={problem.question} disabled={true} />
           {problem.solutions?.map((solution) => (
             <ProblemSolutionSection
               key={solution.id}
               solution={solution}
-              disabled={false}
+              disabled={true}
             />
           ))}
-          <Button
-            onClick={() => createSolution()}
-            rightIcon={<AddIcon />}
-            colorScheme={'purple'}
-            width={'full'}
-          >
-            Add Solution
-          </Button>
         </VStack>
       )}
     </>
   );
 };
 
-ProblemEditPage.getLayout = (page) => {
+ProblemDetailPage.getLayout = (page) => {
   return <PrimaryLayout justify={'items-start'}>{page}</PrimaryLayout>;
 };
 
-export const getServerSideProps: GetServerSideProps<IProblemEditPage> = async (
-  _context
-) => {
+export const getServerSideProps: GetServerSideProps<
+  IProblemDetailPage
+> = async (_context) => {
   const MOCK_PROBLEM: Problem = {
     id: '1',
     title: 'Median in Array Streams',
@@ -145,4 +133,4 @@ export const getServerSideProps: GetServerSideProps<IProblemEditPage> = async (
   };
 };
 
-export default ProblemEditPage;
+export default ProblemDetailPage;

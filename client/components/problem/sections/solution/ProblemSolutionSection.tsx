@@ -31,14 +31,17 @@ const ProblemSolutionSection: React.FC<IProblemSolutionSection> = ({
             Solution
           </Highlight>
         </Heading>
-        <IconButton
-          className={'!ml-auto'}
-          size={'sm'}
-          aria-label={'delete solution'}
-          colorScheme={'red'}
-          icon={<DeleteIcon />}
-          onClick={() => deleteSolution(solution.id)}
-        />
+
+        {!disabled && (
+          <IconButton
+            className={'!ml-auto'}
+            size={'sm'}
+            aria-label={'delete solution'}
+            colorScheme={'red'}
+            icon={<DeleteIcon />}
+            onClick={() => deleteSolution(solution.id)}
+          />
+        )}
       </HStack>
       <RichTextEditor
         content={solution.content}

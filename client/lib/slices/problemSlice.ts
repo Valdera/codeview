@@ -1,10 +1,15 @@
-import { Metadata, Problem, Question, Solution } from '@lib/types/problem';
+import {
+  Problem,
+  ProblemMetadata,
+  Question,
+  Solution,
+} from '@lib/types/problem';
 import { StateCreator } from 'zustand';
 
 export interface ProblemSlice {
   problem: Problem | null;
   load: (problem: Problem) => void;
-  updateProblem: (body: Metadata) => void;
+  updateProblem: (body: ProblemMetadata) => void;
   createSolution: () => void;
   updateSolution: (id: string, body: { content: string }) => void;
   deleteSolution: (id: string) => void;
@@ -35,11 +40,11 @@ export const createProblemSlice: StateCreator<ProblemSlice> = (set, get) => {
     },
     deleteSolution: (id) => {
       const problem = get().problem;
-      if (!problem) return;
+      if (!problem || !problem.solutions) return;
 
       // TODO: delete solution through backend
 
-      problem.solutions = problem.solutions?.filter(
+      problem.solutions = problem.solutions.filter(
         (solution) => solution.id != id
       );
 
@@ -47,9 +52,11 @@ export const createProblemSlice: StateCreator<ProblemSlice> = (set, get) => {
     },
     updateSolution: (id, { content }) => {
       const problem = get().problem;
-      if (!problem) return;
+      if (!problem || !problem.solutions) return;
 
-      problem.solutions = problem.solutions?.map((solution) => {
+      // TODO: Update solution through backend
+
+      problem.solutions = problem.solutions.map((solution) => {
         if (solution.id == id) {
           return { ...solution, content: content };
         }
@@ -84,6 +91,8 @@ export const createProblemSlice: StateCreator<ProblemSlice> = (set, get) => {
     updateProblem: ({ title, difficulty, rating, sources, tags }) => {
       const problem = get().problem;
       if (!problem) return;
+
+      // TODO: Update problem through backend
 
       problem.title = title;
       problem.difficulty = difficulty;

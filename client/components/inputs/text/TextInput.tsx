@@ -1,12 +1,12 @@
 import { Input } from '@mantine/core';
-import { IconSearch } from '@tabler/icons';
-import { ChangeEventHandler, useId } from 'react';
+import { ChangeEventHandler, ReactNode, useId } from 'react';
 
 export interface ITextInput {
   value?: string;
   disabled?: boolean;
   label?: string;
   placeholder?: string;
+  icon?: ReactNode;
   onChange?: ChangeEventHandler<HTMLInputElement>;
 }
 
@@ -15,6 +15,7 @@ const TextInput: React.FC<ITextInput> = ({
   disabled = false,
   label = '',
   placeholder = '',
+  icon = false,
   onChange = () => {},
 }) => {
   const id = useId();
@@ -36,7 +37,7 @@ const TextInput: React.FC<ITextInput> = ({
         onChange={onChange}
         disabled={disabled}
         placeholder={placeholder}
-        icon={<IconSearch size={16} />}
+        icon={icon}
         styles={(theme) => ({
           input: {
             backgroundColor: '#EDF2F7',

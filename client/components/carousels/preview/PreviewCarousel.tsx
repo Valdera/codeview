@@ -1,90 +1,177 @@
-import { Box, useBreakpointValue } from '@chakra-ui/react';
-import { Carousel } from '@mantine/carousel';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  Tag as ChakraTag,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 
-interface ICarouselCard {}
+import { Tag } from '@lib/types/';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-const CarouselCard: React.FC<ICarouselCard> = () => {
+import { Autoplay } from 'swiper';
+import 'swiper/css';
+
+export interface ICarouselCard {
+  title: string;
+  image: string;
+  tags: Tag[];
+}
+
+const CarouselCard: React.FC<ICarouselCard> = ({ title, image, tags }) => {
+  console.log(image);
+
   return (
-    <Box
-      rounded={'md'}
-      backgroundColor={'primary.500'}
-      width={'full'}
-      height={'full'}
-    ></Box>
+    <Box rounded={'md'} width={'full'} height={'full'}>
+      <Image
+        zIndex={-2}
+        width={'full'}
+        height={'full'}
+        position={'absolute'}
+        rounded={'md'}
+        src={image}
+        alt={'Dan Abramov'}
+      />
+      <Box
+        zIndex={-1}
+        width={'full'}
+        height={'full'}
+        position={'absolute'}
+        rounded={'md'}
+        backgroundColor={'primary.500'}
+        opacity={0.7}
+      />
+      <Flex flexDir={'column'} gap={3} padding={3} height={'full'}>
+        <Heading color={'white'} fontSize={'3xl'}>
+          {title}
+        </Heading>
+        <HStack>
+          {tags.map((tag) => (
+            <ChakraTag
+              fontWeight={'bold'}
+              size={'sm'}
+              key={tag.id}
+              backgroundColor={tag.color}
+              color={'white'}
+            >
+              {tag.label}
+            </ChakraTag>
+          ))}
+        </HStack>
+        <Button
+          size={'sm'}
+          width={'100px'}
+          color={'primary.500'}
+          marginTop={'auto'}
+        >
+          See More
+        </Button>
+      </Flex>
+    </Box>
   );
 };
 
 const data = [
   {
-    image:
-      'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80',
-    title: 'Best forests to visit in North America',
-    category: 'nature',
+    image: '/assets/cover_1.png',
+    title: 'Java Spring Boot',
+    tags: [
+      { id: '1', label: 'Array', color: '#FC7300' },
+      { id: '2', label: 'Binary Tree', color: '#00425A' },
+    ],
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1559494007-9f5847c49d94?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80',
-    title: 'Hawaii beaches review: better than you think',
-    category: 'beach',
+    image: '/assets/cover_2.png',
+    title: 'Java Spring Boot',
+    tags: [
+      { id: '1', label: 'Array', color: '#FC7300' },
+      { id: '2', label: 'Binary Tree', color: '#00425A' },
+    ],
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1608481337062-4093bf3ed404?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80',
-    title: 'Mountains at night: 12 best locations to enjoy the view',
-    category: 'nature',
+    image: '/assets/cover_2.png',
+    title: 'Java Spring Boot',
+    tags: [
+      { id: '1', label: 'Array', color: '#FC7300' },
+      { id: '2', label: 'Binary Tree', color: '#00425A' },
+    ],
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80',
-    title: 'Aurora in Norway: when to visit for best experience',
-    category: 'nature',
+    image: '/assets/cover_1.png',
+    title: 'Java Spring Boot',
+    tags: [
+      { id: '1', label: 'Array', color: '#FC7300' },
+      { id: '2', label: 'Binary Tree', color: '#00425A' },
+    ],
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80',
-    title: 'Best places to visit this winter',
-    category: 'tourism',
+    image: '/assets/cover_1.png',
+    title: 'Java Spring Boot',
+    tags: [
+      { id: '1', label: 'Array', color: '#FC7300' },
+      { id: '2', label: 'Binary Tree', color: '#00425A' },
+    ],
   },
   {
-    image:
-      'https://images.unsplash.com/photo-1582721478779-0ae163c05a60?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80',
-    title: 'Active volcanos reviews: travel at your own risk',
-    category: 'nature',
+    image: '/assets/cover_1.png',
+    title: 'Java Spring Boot',
+    tags: [
+      { id: '1', label: 'Array', color: '#FC7300' },
+      { id: '2', label: 'Binary Tree', color: '#00425A' },
+    ],
   },
 ];
 
 const PreviewCarousel = () => {
-  const slides = data.map((item) => (
-    <Carousel.Slide key={item.title}>
-      <CarouselCard {...item} />
-    </Carousel.Slide>
-  ));
-
-  const slideSize = useBreakpointValue(
+  const slideWidth = useBreakpointValue(
     {
       base: '100%',
       md: '400px',
     },
     {
-      // Breakpoint to use when mediaqueries cannot be used, such as in server-side rendering
-      // (Defaults to 'base')
       ssr: true,
       fallback: '100%',
     }
   );
 
+  const slidesPerView = useBreakpointValue(
+    {
+      base: 1,
+      md: 2,
+      lg: 1,
+      xl: 2,
+      '2xl': 4,
+    },
+    {
+      ssr: true,
+      fallback: '1',
+    }
+  );
+
   return (
     <>
-      <Carousel
-        slideSize={slideSize}
-        height={200}
-        align={'start'}
-        slideGap={'md'}
-        controlsOffset={'xs'}
-        loop
+      <Swiper
+        className={'w-full h-full'}
+        spaceBetween={10}
+        slidesPerView={slidesPerView ?? 1}
+        onSlideChange={() => console.log('slide change')}
+        onSwiper={(swiper) => console.log(swiper)}
+        loop={true}
+        modules={[Autoplay]}
+        autoplay={{
+          delay: 2500,
+          disableOnInteraction: true,
+        }}
       >
-        {slides}
-      </Carousel>
+        {data.map((item, i) => (
+          <SwiperSlide key={i} style={{ width: slideWidth }}>
+            <CarouselCard {...item} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </>
   );
 };

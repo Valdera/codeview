@@ -1,24 +1,48 @@
-import { Grid, VStack } from '@chakra-ui/react';
+import { Grid, useBreakpointValue, VStack } from '@chakra-ui/react';
 import PreviewCarousel from '@components/carousels/preview/PreviewCarousel';
 import PrimaryLayout from '@components/layouts/primary/PrimaryLayout';
-import ProblemFilter from '@components/problem/filter/ProblemFilter';
+import ProblemFilterSection from '@components/problem/sections/filter/ProblemFilterSection';
 import ProblemListTable from '@components/problem/table/list/ProblemListTable';
 import SegmentStat from '@components/stats/segment/SegmentStat';
 import { Difficulty, Problem, Source, Tag } from '@lib/types';
 import { NextPageWithLayout } from '@pages/page';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  InferGetServerSidePropsType,
+} from 'next';
 
-const ProblemListPage: NextPageWithLayout = ({
+interface IProblemListPage {
+  difficulties: Difficulty[];
+  tags: Tag[];
+  sources: Source[];
+  problems: Problem[];
+}
+
+const ProblemListPage: NextPageWithLayout<IProblemListPage> = ({
   difficulties,
   sources,
   tags,
   problems,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const filterWrapper: 'accordion' | 'box' =
+    useBreakpointValue(
+      {
+        base: 'accordion',
+        md: 'box',
+      },
+      {
+        ssr: true,
+        fallback: 'box',
+      }
+    ) ?? 'box';
+
   return (
     <VStack width={'full'} gap={5}>
       <Grid
         width={'full'}
         gridTemplateColumns={{ base: '1fr', lg: 'max-content 1fr' }}
+        gridTemplateRows={{ base: 'max-content 200px', lg: 'max-content' }}
         gap={5}
       >
         <SegmentStat
@@ -46,14 +70,8 @@ const ProblemListPage: NextPageWithLayout = ({
         />
         <PreviewCarousel />
       </Grid>
-      <ProblemFilter
-        wrapper={'box'}
-        display={{ base: 'none', md: 'block' }}
-        data={{ difficulties, sources, tags }}
-      />
-      <ProblemFilter
-        display={{ base: 'block', md: 'none' }}
-        wrapper={'accordion'}
+      <ProblemFilterSection
+        wrapper={filterWrapper}
         data={{ difficulties, sources, tags }}
       />
       <ProblemListTable data={problems} />
@@ -65,7 +83,9 @@ ProblemListPage.getLayout = (page) => {
   return <PrimaryLayout justify={'items-start'}>{page}</PrimaryLayout>;
 };
 
-export const getServerSideProps: GetServerSideProps = async (_context) => {
+export const getServerSideProps = async (
+  _context: GetServerSidePropsContext
+): Promise<GetServerSidePropsResult<IProblemListPage>> => {
   const MOCK_DIFFICULTIES: Difficulty[] = [
     { id: '1', label: 'Easy', color: 'teal' },
     { id: '2', label: 'Medium', color: 'yellow' },
@@ -107,7 +127,7 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
     {
       id: '1',
       title: 'Median of Two Sorted Arrays',
-      slug: '/problems/median-of-two-sorted-arrays',
+      slug: '/problem/detail/1',
       difficulty: { id: '1', label: 'easy', color: 'teal' },
       tags: [
         { id: '1', label: 'Array', color: '#FC7300' },
@@ -123,7 +143,7 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
     {
       id: '2',
       title: 'Median of Two Sorted Arrays',
-      slug: '/problems/median-of-two-sorted-arrays',
+      slug: '/problem/detail/1',
       difficulty: { id: '1', label: 'easy', color: 'teal' },
       tags: [
         { id: '1', label: 'Array', color: '#FC7300' },
@@ -139,7 +159,7 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
     {
       id: '3',
       title: 'Median of Two Sorted Arrays',
-      slug: '/problems/median-of-two-sorted-arrays',
+      slug: '/problem/detail/1',
       difficulty: { id: '1', label: 'easy', color: 'teal' },
       tags: [
         { id: '1', label: 'Array', color: '#FC7300' },
@@ -155,7 +175,7 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
     {
       id: '4',
       title: 'Median of Two Sorted Arrays',
-      slug: '/problems/median-of-two-sorted-arrays',
+      slug: '/problem/detail/1',
       difficulty: { id: '1', label: 'easy', color: 'teal' },
       tags: [
         { id: '1', label: 'Array', color: '#FC7300' },

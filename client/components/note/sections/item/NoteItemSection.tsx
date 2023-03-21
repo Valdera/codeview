@@ -32,7 +32,7 @@ const NoteItemSection: React.FC<INoteItemSection> = ({
 }) => {
   const { updateNoteItem } = useNoteStore();
 
-  const [title, setTitle] = useState<string>(noteItem.title);
+  const [header, setHeader] = useState<string>(noteItem.header);
   const [isEditable, setIsEditable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -76,8 +76,8 @@ const NoteItemSection: React.FC<INoteItemSection> = ({
                 <Input
                   type={'text'}
                   placeholder={'Heading'}
-                  value={title}
-                  onChange={(evt) => setTitle(evt.target.value)}
+                  value={header}
+                  onChange={(evt) => setHeader(evt.target.value)}
                   readOnly={!isEditable}
                 />
                 <InputRightElement width={'4.5rem'}>
@@ -100,7 +100,7 @@ const NoteItemSection: React.FC<INoteItemSection> = ({
                       onClick={() => {
                         setIsLoading(true);
                         updateNoteItem(noteItem.id, {
-                          title,
+                          header,
                           content: noteItem.content,
                         });
                         setIsLoading(false);
@@ -114,13 +114,13 @@ const NoteItemSection: React.FC<INoteItemSection> = ({
               </InputGroup>
             )}
             <Heading size={'md'} color={'primary.700'}>
-              {noteItem.title}
+              {noteItem.header}
             </Heading>
             <RichTextEditor
               content={noteItem.content}
               onSave={(content) => {
                 updateNoteItem(noteItem.id, {
-                  title: noteItem.title,
+                  header: noteItem.header,
                   content: content,
                 });
               }}

@@ -1,5 +1,6 @@
 import { Grid, Tag, Td, Tr } from '@chakra-ui/react';
 import { Note } from '@lib/types';
+import { truncateString } from '@lib/utils';
 import Link from 'next/link';
 
 export interface INoteListTableItem {
@@ -34,9 +35,10 @@ const NoteListTableItem: React.FC<INoteListTableItem> = ({ data }) => {
               display={'flex'}
               backgroundColor={tag.color}
               color={'white'}
+              textOverflow={'ellipsis'}
               justifyContent={'center'}
             >
-              {tag.label}
+              {truncateString(tag.label, 8)}
             </Tag>
           ))}
         </Grid>

@@ -10,11 +10,13 @@ export type Note = NoteMetadata & {
   references: string[];
   items?: NoteItem[];
   slug?: string;
+  createdAt?: string;
 };
 
 export interface NoteItem {
   id: string;
   numOrder: number;
-  title: string;
+  header: string;
   content: string;
+  createdAt?: string;
 }

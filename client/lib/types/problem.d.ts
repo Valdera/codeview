@@ -3,17 +3,20 @@ import { Source, Tag } from './metadata';
 export interface Solution {
   id: string;
   content: string;
+  createdAt?: string;
 }
 
 export interface Difficulty {
   id: string;
   label: string;
   color: string;
+  createdAt?: string;
 }
 
 export interface Question {
   id: string;
   content: string;
+  createdAt?: string;
 }
 
 export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
@@ -31,4 +34,5 @@ export type Problem = ProblemMetadata & {
   slug?: string;
   question?: Question;
   solutions?: Solution[];
+  createdAt?: string;
 };

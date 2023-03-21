@@ -8,7 +8,7 @@ export interface NoteSlice {
   createNoteItem: () => void;
   updateNoteItem: (
     id: string,
-    body: { title: string; content: string }
+    body: { header: string; content: string }
   ) => void;
   deleteNoteItem: (id: string) => void;
   reorderNoteItem: (from: number, to: number) => void;
@@ -40,7 +40,7 @@ export const createNoteSlice: StateCreator<NoteSlice> = (set, get) => {
 
       const noteItem: NoteItem = {
         id: Date.now().toString(),
-        title: 'Unititled',
+        header: 'Untitled',
         content: `<h2 style="text-align: center; margin-left: 0px!important;"><strong>Heading</strong></h2>`,
         numOrder: note.items.length,
       };
@@ -49,7 +49,7 @@ export const createNoteSlice: StateCreator<NoteSlice> = (set, get) => {
 
       set({ note });
     },
-    updateNoteItem: (id, { title, content }) => {
+    updateNoteItem: (id, { header, content }) => {
       const note = get().note;
       if (!note || !note.items) return;
 
@@ -57,7 +57,7 @@ export const createNoteSlice: StateCreator<NoteSlice> = (set, get) => {
 
       note.items = note.items.map((item) => {
         if (item.id == id) {
-          return { ...item, title: title, content: content };
+          return { ...item, header: header, content: content };
         }
         return item;
       });

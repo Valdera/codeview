@@ -33,7 +33,7 @@ const CarouselCard: React.FC<ICarouselCard> = ({ title, image, tags }) => {
         position={'absolute'}
         rounded={'md'}
         src={image}
-        alt={'Dan Abramov'}
+        alt={title}
       />
       <Box
         zIndex={-1}

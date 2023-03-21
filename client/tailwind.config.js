@@ -16,7 +16,7 @@ module.exports = {
     },
   },
   plugins: [
-    require('daisyui'),
+    require('@tailwindcss/line-clamp'),
     function ({ addVariant }) {
       addVariant('child', '& > *');
       addVariant('child-hover', '& > *:hover');

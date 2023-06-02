@@ -39,7 +39,6 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface ISegmentStat {
-  total: string;
   data: {
     label: string;
     count: string;
@@ -48,7 +47,7 @@ interface ISegmentStat {
   }[];
 }
 
-const SegmentStat: React.FC<ISegmentStat> = ({ total, data }) => {
+const SegmentStat: React.FC<ISegmentStat> = ({ data }) => {
   const { classes } = useStyles();
 
   const segments = data.map((segment) => ({
@@ -68,13 +67,15 @@ const SegmentStat: React.FC<ISegmentStat> = ({ total, data }) => {
         fz={'xs'}
         c={'dimmed'}
         fw={700}
-        className={'text-primary-700'}
+        className={'text-gray-200'}
       >
         {stat.label}
       </Text>
 
       <Group position={'apart'} align={'flex-end'} spacing={0}>
-        <Text fw={700}>{stat.count}</Text>
+        <Text fw={700} className={'text-gray-200'}>
+          {stat.count}
+        </Text>
         <Text c={stat.color} fw={700} size={'sm'} className={classes.statCount}>
           {stat.part}%
         </Text>
@@ -83,11 +84,11 @@ const SegmentStat: React.FC<ISegmentStat> = ({ total, data }) => {
   ));
 
   return (
-    <Paper withBorder p={'md'} radius={'md'}>
+    <Paper p={'md'} radius={'md'} className={'bg-foreground'}>
       <Group position={'apart'}>
         <Group align={'flex-end'} spacing={'xs'}>
-          <Text fz={'xl'} fw={700} className={'text-primary-700'}>
-            {total}
+          <Text fz={'xl'} fw={700} className={'text-gray-200'}>
+            Problem Stats
           </Text>
         </Group>
         <IconDeviceAnalytics

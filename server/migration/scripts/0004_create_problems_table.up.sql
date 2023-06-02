@@ -1,14 +1,12 @@
 CREATE TABLE IF NOT EXISTS "problems" (
-  "id" BIGSERIAL PRIMARY KEY,
+  "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "title" VARCHAR(50) NOT NULL,
-  "difficulty_id" INTEGER NOT NULL,
-  "rating" INTEGER DEFAULT 0 NOT NULL, 
+  "difficulty_id" UUID NOT NULL,
+  "rating" INTEGER DEFAULT 0 NOT NULL,
   CHECK ("rating" >= 0),
   CHECK ("rating" <= 5),
-  "created_at" TIMESTAMP,
-  "updated_at" TIMESTAMP,
-  "deleted_at" TIMESTAMP,
-  CONSTRAINT fk_difficulty
-    FOREIGN KEY(difficulty_id)
-        REFERENCES difficulties(id)
+  "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  "deleted_at" TIMESTAMP DEFAULT NULL,
+  CONSTRAINT fk_difficulty FOREIGN KEY(difficulty_id) REFERENCES difficulties(id)
 );

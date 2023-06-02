@@ -1,4 +1,4 @@
-import Sidebar from '@components/sidebar/Sidebar';
+import Navigation from '@components/navigation/Navigation';
 
 import cn from 'classnames';
 import styles from './PrimaryLayout.module.scss';
@@ -14,14 +14,14 @@ const PrimaryLayout: React.FC<IPrimaryLayout> = ({
 }) => {
   return (
     <>
-      <Sidebar>
+      <Navigation>
         <main>
           <div {...divProps} className={cn(styles.root, `${justify}`)}>
             {children}
             <div className={'m-auto'} />
           </div>
         </main>
-      </Sidebar>
+      </Navigation>
     </>
   );
 };

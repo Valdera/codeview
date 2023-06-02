@@ -22,7 +22,7 @@ const ProblemDetailPage: NextPageWithLayout<IProblemDetailPage> = ({
   sources,
   tags,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { problem, load, createSolution } = useProblemStore();
+  const { problem, load } = useProblemStore();
 
   useEffect(() => {
     load(initialProblem);

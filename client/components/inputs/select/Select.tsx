@@ -46,13 +46,18 @@ const Select: React.FC<ISelect> = ({
         itemsWrapper: {
           padding: '0',
         },
+        dropdown: {
+          backgroundColor: theme.colors.background,
+          borderColor: 'transparent',
+          boxShadow: '1px 1px 25px -2px rgba(51,49,49,0.75)',
+        },
         input: {
           backgroundColor: value
             ? theme.colors[getColorFromValue(value)][1]
-            : '#EDF2F7',
+            : theme.colors.background,
           color: value
             ? theme.colors[getColorFromValue(value)][9]
-            : theme.colors.gray[9],
+            : theme.colors.gray[1],
           fontWeight: 400,
           outline: 'none',
           borderColor: 'transparent',
@@ -67,7 +72,7 @@ const Select: React.FC<ISelect> = ({
         },
         label: {
           marginBottom: '5px',
-          color: theme.colors.primary[7],
+          color: theme.colors.gray[2],
         },
       })}
       className={'w-full'}
@@ -84,8 +89,9 @@ interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
 const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
   ({ color, label, ...others }: ItemProps, ref) => {
     const styleItem = others['data-selected']
-      ? { backgroundColor: '#F1F3F4' }
+      ? { backgroundColor: '#374151' }
       : {};
+
     return (
       <div
         ref={ref}

@@ -12,7 +12,7 @@ import { Problem } from '@lib/types';
 import cn from 'classnames';
 import { useState } from 'react';
 import s from './ProblemListTable.module.scss';
-import ProblemItemList from './ProblemListTableItem';
+import ProblemListTableItem from './ProblemListTableItem';
 import ProblemListTablePagination from './ProblemListTablePagination';
 
 export interface IProblemListTable {
@@ -26,21 +26,21 @@ const ProblemListTable: React.FC<IProblemListTable> = ({
   page = 1,
   totalPage = 10,
 }) => {
-  const [problems, setProblems] = useState<Problem[]>(data);
+  const [problems, _setProblems] = useState<Problem[]>(data);
   return (
     <VStack width={'full'} gap={2}>
       <Box
         width={'full'}
-        backgroundColor={'white'}
+        backgroundColor={'foreground'}
         shadow={'sm'}
-        minHeight={`${problems.length == 0 ? 'sm' : ''}`}
-        rounded={'sm'}
+        minHeight={`${problems.length <= 0 ? 'sm' : ''}`}
+        rounded={'md'}
         position={'relative'}
       >
         {problems.length > 0 ? (
-          <TableContainer rounded={'sm'}>
-            <Table>
-              <Thead backgroundColor={'primary.700'} roundedTop={'md'}>
+          <TableContainer rounded={'md'}>
+            <Table colorScheme={'blackAlpha'}>
+              <Thead backgroundColor={'primary.600'} roundedTop={'md'}>
                 <Tr>
                   <Th>
                     <h3 className={cn(s.tr)}>Title</h3>
@@ -61,7 +61,7 @@ const ProblemListTable: React.FC<IProblemListTable> = ({
               </Thead>
               <Tbody>
                 {problems.map((problem) => (
-                  <ProblemItemList key={problem.id} data={problem} />
+                  <ProblemListTableItem key={problem.id} data={problem} />
                 ))}
               </Tbody>
             </Table>
@@ -75,7 +75,7 @@ const ProblemListTable: React.FC<IProblemListTable> = ({
           >
             <div
               className={
-                'p-3 mx-auto text-blue-500 bg-blue-100 rounded-full dark:bg-gray-800'
+                'p-3 mx-auto text-purple-600 bg-background rounded-full dark:bg-gray-800'
               }
             >
               <svg
@@ -95,10 +95,10 @@ const ProblemListTable: React.FC<IProblemListTable> = ({
                 />
               </svg>
             </div>
-            <h1 className={'mt-3 text-lg text-gray-800 dark:text-white'}>
+            <h1 className={'mt-3 text-lg text-gray-200 dark:text-white'}>
               No problem found
             </h1>
-            <p className={'mt-2 text-gray-500 dark:text-gray-400 text-center'}>
+            <p className={'mt-2 text-gray-400 dark:text-gray-400 text-center'}>
               Your search did not match any problem. Please try again or search
               another problem.
             </p>

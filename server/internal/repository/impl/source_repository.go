@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -142,9 +141,7 @@ func (r *sourceRepository) DeleteSourceById(ctx context.Context, id uint) error 
 	if err := r.db.Model(&entity.Source{}).
 		Count(&total).
 		Where("id = ?", id).
-		Updates(&entity.Source{
-			DeletedAt: time.Now(),
-		}).
+		Delete(&entity.Source{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Source Repository - DeleteSourceById : %v\n", err)
 		return err

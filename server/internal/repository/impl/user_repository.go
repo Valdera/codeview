@@ -35,7 +35,7 @@ func (r *userRepository) CreateUser(ctx context.Context, body *entity.User) (*en
 		Username: body.Username,
 		Email:    body.Email,
 		Password: hashedPassword,
-		Role:     entity.USER,
+		Role:     entity.RoleUser,
 	}
 
 	if err := r.db.Model(&entity.User{}).

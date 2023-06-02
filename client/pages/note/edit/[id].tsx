@@ -8,7 +8,6 @@ import { Note, Tag } from '@lib/types';
 import { NextPageWithLayout } from '@pages/page';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useEffect } from 'react';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 interface INoteEditPage {
   note: Note;
@@ -19,7 +18,7 @@ const NoteEditPage: NextPageWithLayout<INoteEditPage> = ({
   tags,
   note: initialNote,
 }) => {
-  const { reorderNoteItem, load, note, createNoteItem } = useNoteStore();
+  const { load, note, createNoteItem } = useNoteStore();
 
   useEffect(() => {
     load(initialNote);
@@ -30,31 +29,8 @@ const NoteEditPage: NextPageWithLayout<INoteEditPage> = ({
   return (
     <>
       <VStack width={'full'} gap={5}>
-        <NoteMetadataSection data={{ note: note, tags: tags }} />
-        <DragDropContext
-          onDragEnd={({ destination, source }) =>
-            reorderNoteItem(source.index, destination?.index || 0)
-          }
-        >
-          <Droppable droppableId={'dnd-list'} direction={'vertical'}>
-            {(provided) => (
-              <div
-                className={'w-full flex flex-col'}
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {note.items?.map((item, index) => (
-                  <NoteItemSection
-                    key={item.id}
-                    index={index}
-                    data={{ noteItem: item }}
-                  />
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <NoteMetadataSection data={{ tags: tags }} />
+        <NoteItemSection />
         <Button
           onClick={() => createNoteItem()}
           rightIcon={<AddIcon />}
@@ -102,24 +78,22 @@ export const getServerSideProps = async (
     items: [
       {
         id: '1',
-        title: 'The Problem of Granularity',
         content: `<h2 style="text-align: center; margin-left: 0px!important;"><strong>The Problem of Granularity</strong></h2>`,
         numOrder: 0,
       },
       {
         id: '2',
-        title: 'The Problem of Identity',
         content: `<h2 style="text-align: center; margin-left: 0px!important;"><strong>The Problem of Identity</strong></h2>`,
         numOrder: 1,
       },
       {
         id: '3',
-        title: 'The Problem of Inheritance',
         content: `<h2 style="text-align: center; margin-left: 0px!important;"><strong>The Problem of Inheritance</strong></h2>`,
         numOrder: 2,
       },
     ],
-    references: ['Java Persistence by Oreilly'],
+    status: 'DRAFT',
+    emoji: '1f92a',
   };
 
   return {

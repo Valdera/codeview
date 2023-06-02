@@ -30,16 +30,16 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
   data,
   disabled = false,
 }) => {
-  const [difficulties, setDifficulties] = useState<Difficulty[]>(
+  const [difficulties, _setDifficulties] = useState<Difficulty[]>(
     data.difficulties ?? []
   );
-  const [sources, setSources] = useState<Source[]>(data.sources ?? []);
-  const [tags, setTags] = useState<Tag[]>(data.tags ?? []);
+  const [sources, _setSources] = useState<Source[]>(data.sources ?? []);
+  const [tags, _setTags] = useState<Tag[]>(data.tags ?? []);
 
   const [isEditable, setIsEditable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { problem } = useProblemStore();
+  const { problem, updateProblem } = useProblemStore();
   if (!problem) return <></>;
 
   const initialValues: {
@@ -60,12 +60,12 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
     <Formik
       initialValues={initialValues}
       onSubmit={(values, _actions) => {
-        console.log(values);
+        updateProblem(values);
       }}
     >
       {(props) => (
         <form onSubmit={props.handleSubmit} className={'w-full'}>
-          <Box width={'full'} padding={'5'} backgroundColor={'white'}>
+          <Box width={'full'} padding={'5'} backgroundColor={'foreground'}>
             <HStack
               width={'full'}
               marginBottom={5}
@@ -124,7 +124,11 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
               alignItems={'start'}
               justifyContent={'start'}
             >
-              <GridItem colSpan={{ base: 2, md: 3, lg: 4 }}>
+              <GridItem
+                colSpan={{ base: 2, md: 3, lg: 4 }}
+                display={disabled ? 'flex' : ''}
+                justifyContent={disabled ? 'center' : ''}
+              >
                 {!disabled ? (
                   <TextInput
                     value={props.values.title}
@@ -135,16 +139,26 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
                     placeholder={'Search problems'}
                   />
                 ) : (
-                  <Heading>{problem.title}</Heading>
+                  <Heading color={'white'}>{problem.title}</Heading>
                 )}
               </GridItem>
               <GridItem>
                 <Select
-                  data={difficulties.map((d) => ({
-                    value: d.id,
-                    label: d.label,
-                    color: d.color,
-                  }))}
+                  data={
+                    disabled
+                      ? [
+                          {
+                            value: problem.difficulty.id,
+                            label: problem.difficulty.label,
+                            color: problem.difficulty.color,
+                          },
+                        ]
+                      : difficulties.map((d) => ({
+                          value: d.id,
+                          label: d.label,
+                          color: d.color,
+                        }))
+                  }
                   value={props.values.difficulty}
                   onChange={(value) => props.setFieldValue('difficulty', value)}
                   label={'Difficulty'}
@@ -162,11 +176,19 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
               </GridItem>
               <GridItem colSpan={{ base: 2, md: 1 }}>
                 <MultiSelect
-                  data={sources.map((s) => ({
-                    value: s.id,
-                    label: s.label,
-                    color: s.color,
-                  }))}
+                  data={
+                    disabled
+                      ? problem.sources.map((s) => ({
+                          value: s.id,
+                          label: s.label,
+                          color: s.color,
+                        }))
+                      : sources.map((s) => ({
+                          value: s.id,
+                          label: s.label,
+                          color: s.color,
+                        }))
+                  }
                   value={props.values.sources}
                   onChange={(value) => props.setFieldValue('sources', value)}
                   label={'Sources'}
@@ -176,11 +198,19 @@ const ProblemMetadataSection: React.FC<IProblemMetadataSection> = ({
               </GridItem>
               <GridItem colSpan={{ base: 2, md: 3, lg: 1 }}>
                 <MultiSelect
-                  data={tags.map((t) => ({
-                    value: t.id,
-                    label: t.label,
-                    color: t.color,
-                  }))}
+                  data={
+                    disabled
+                      ? problem.tags.map((t) => ({
+                          value: t.id,
+                          label: t.label,
+                          color: t.color,
+                        }))
+                      : tags.map((t) => ({
+                          value: t.id,
+                          label: t.label,
+                          color: t.color,
+                        }))
+                  }
                   value={props.values.tags}
                   onChange={(value) => props.setFieldValue('tags', value)}
                   label={'Tags'}

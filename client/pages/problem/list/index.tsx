@@ -1,10 +1,17 @@
 import { Grid, useBreakpointValue, VStack } from '@chakra-ui/react';
 import PreviewCarousel from '@components/carousels/preview/PreviewCarousel';
+import CollectionCarouselCard from '@components/collection/cards/carousel/CollectionCarouselCard';
 import PrimaryLayout from '@components/layouts/primary/PrimaryLayout';
 import ProblemFilterSection from '@components/problem/sections/filter/ProblemFilterSection';
 import ProblemListTable from '@components/problem/table/list/ProblemListTable';
 import SegmentStat from '@components/stats/segment/SegmentStat';
-import { Difficulty, Problem, Source, Tag } from '@lib/types';
+import {
+  CollectionPreview,
+  Difficulty,
+  Problem,
+  Source,
+  Tag,
+} from '@lib/types';
 import { NextPageWithLayout } from '@pages/page';
 import {
   GetServerSidePropsContext,
@@ -17,6 +24,7 @@ interface IProblemListPage {
   tags: Tag[];
   sources: Source[];
   problems: Problem[];
+  collectionPreview: CollectionPreview[];
 }
 
 const ProblemListPage: NextPageWithLayout<IProblemListPage> = ({
@@ -24,6 +32,7 @@ const ProblemListPage: NextPageWithLayout<IProblemListPage> = ({
   sources,
   tags,
   problems,
+  collectionPreview,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const filterWrapper: 'accordion' | 'box' =
     useBreakpointValue(
@@ -44,9 +53,9 @@ const ProblemListPage: NextPageWithLayout<IProblemListPage> = ({
         gridTemplateColumns={{ base: '1fr', lg: 'max-content 1fr' }}
         gridTemplateRows={{ base: 'max-content 200px', lg: 'max-content' }}
         gap={5}
+        alignItems={'center'}
       >
         <SegmentStat
-          total={'200 Question'}
           data={[
             {
               label: 'Easy Problems',
@@ -68,7 +77,13 @@ const ProblemListPage: NextPageWithLayout<IProblemListPage> = ({
             },
           ]}
         />
-        <PreviewCarousel />
+        <Grid width={'full'} height={'90%'}>
+          <PreviewCarousel
+            contents={collectionPreview.map((item) => (
+              <CollectionCarouselCard key={item.id} {...item} />
+            ))}
+          />
+        </Grid>
       </Grid>
       <ProblemFilterSection
         wrapper={filterWrapper}
@@ -127,7 +142,6 @@ export const getServerSideProps = async (
     {
       id: '1',
       title: 'Median of Two Sorted Arrays',
-      slug: '/problem/detail/1',
       difficulty: { id: '1', label: 'easy', color: 'teal' },
       tags: [
         { id: '1', label: 'Array', color: '#FC7300' },
@@ -143,7 +157,6 @@ export const getServerSideProps = async (
     {
       id: '2',
       title: 'Median of Two Sorted Arrays',
-      slug: '/problem/detail/1',
       difficulty: { id: '1', label: 'easy', color: 'teal' },
       tags: [
         { id: '1', label: 'Array', color: '#FC7300' },
@@ -159,7 +172,6 @@ export const getServerSideProps = async (
     {
       id: '3',
       title: 'Median of Two Sorted Arrays',
-      slug: '/problem/detail/1',
       difficulty: { id: '1', label: 'easy', color: 'teal' },
       tags: [
         { id: '1', label: 'Array', color: '#FC7300' },
@@ -175,7 +187,6 @@ export const getServerSideProps = async (
     {
       id: '4',
       title: 'Median of Two Sorted Arrays',
-      slug: '/problem/detail/1',
       difficulty: { id: '1', label: 'easy', color: 'teal' },
       tags: [
         { id: '1', label: 'Array', color: '#FC7300' },
@@ -190,12 +201,80 @@ export const getServerSideProps = async (
     },
   ];
 
+  const MOCK_COLLECTION_PREVIEW: CollectionPreview[] = [
+    {
+      id: '1',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '2',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '3',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '4',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '5',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '6',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '7',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '8',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+  ];
+
   return {
     props: {
       difficulties: MOCK_DIFFICULTIES,
       tags: MOCK_TAGS,
       sources: MOCK_SOURCES,
       problems: MOCK_PROBLEMS,
+      collectionPreview: MOCK_COLLECTION_PREVIEW,
     },
   };
 };

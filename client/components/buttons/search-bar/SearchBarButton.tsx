@@ -20,15 +20,28 @@ const SearchBarButton: React.FC<ISearchBarButton> = ({
       <InputLeftElement>
         <SearchIcon color={'gray.500'} />
       </InputLeftElement>
-      <InputRightElement display={{ base: 'none', sm: 'flex' }} width={'7rem'}>
-        <Kbd>shift</Kbd> + <Kbd>H</Kbd>
+      <InputRightElement
+        display={{ base: 'none', sm: 'flex' }}
+        width={'7rem'}
+        color={'white'}
+        gap={1}
+      >
+        <Kbd color={'background'}>shift</Kbd> +{' '}
+        <Kbd color={'background'}>H</Kbd>
       </InputRightElement>
       <Input
         cursor={'pointer'}
-        isReadOnly
         type={'text'}
         placeholder={placeholder}
         onClick={onClick}
+        focusBorderColor={'transparent'}
+        backgroundColor={'background'}
+        borderColor={'none'}
+        _placeholder={{ opacity: 1, color: 'none' }}
+        _hover={{
+          borderColor: 'none',
+        }}
+        isReadOnly
       />
     </InputGroup>
   );

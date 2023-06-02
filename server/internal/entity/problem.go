@@ -2,10 +2,12 @@ package entity
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Problem struct {
-	ID           uint `gorm:"primaryKey"`
+	ID           uuid.UUID `gorm:"primaryKey"`
 	Title        string
 	Rating       *int
 	DifficultyID uint
@@ -18,48 +20,38 @@ type Problem struct {
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time
 }
-
-type Tag struct {
-	ID        uint `gorm:"primaryKey"`
-	Label     string
-	Color     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
-}
-
 type Source struct {
-	ID        uint `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey"`
 	Label     string
 	Color     string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt time.Time
+	DeletedAt *time.Time
 }
 
 type Difficulty struct {
-	ID        uint `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey"`
 	Label     string
 	Color     string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt time.Time
+	DeletedAt *time.Time
 }
 
 type Solution struct {
-	ID        uint `gorm:"primaryKey"`
-	ProblemID uint
+	ID        uuid.UUID `gorm:"primaryKey"`
+	ProblemID uuid.UUID
 	Content   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt time.Time
+	DeletedAt *time.Time
 }
 
 type Question struct {
-	ID        uint `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey"`
 	ProblemID uint
 	Content   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt time.Time
+	DeletedAt *time.Time
 }

@@ -34,8 +34,11 @@ class Theme {
             temp.push(itemColors[color]);
           }
           res[key] = temp;
+        } else {
+          res[key] = itemColors;
         }
       }
+
       return res;
     }
 

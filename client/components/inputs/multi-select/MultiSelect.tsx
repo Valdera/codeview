@@ -51,9 +51,23 @@ const MultiSelect: React.FC<IMultiSelect> = ({
         onChange={onChange}
         className={'w-full'}
         styles={(theme) => ({
+          dropdown: {
+            backgroundColor: theme.colors.background,
+            borderColor: 'transparent',
+            boxShadow: '1px 1px 25px -2px rgba(51,49,49,0.75)',
+          },
+          item: {
+            color: `${theme.colors.gray[1]} !important`,
+            '&:hover': {
+              backgroundColor: '#374151',
+            },
+            '&[data-hovered]': {
+              backgroundColor: '#374151',
+            },
+          },
           input: {
-            backgroundColor: '#EDF2F7',
-            color: theme.colors.gray[9],
+            backgroundColor: theme.colors.background,
+            color: theme.colors.gray[1],
             width: '100%',
             fontWeight: 400,
             outline: 'none',
@@ -75,7 +89,7 @@ const MultiSelect: React.FC<IMultiSelect> = ({
           },
           label: {
             marginBottom: '5px',
-            color: theme.colors.primary[7],
+            color: theme.colors.gray[2],
           },
         })}
       />
@@ -86,19 +100,23 @@ const MultiSelect: React.FC<IMultiSelect> = ({
 const Value: React.FC<
   MultiSelectValueProps & { value: string; color: string; disabled?: boolean }
 > = ({ color, label, onRemove, disabled, ...others }) => {
-  console.log(disabled);
   return (
     <div className={others.className}>
       <Flex
         alignItems={'center'}
         justifyContent={'center'}
         backgroundColor={color}
-        padding={'3px'}
+        padding={'2px'}
         paddingLeft={'3'}
         paddingRight={disabled ? '3' : '0'}
         borderRadius={'md'}
       >
-        <Text color={'white'} lineHeight={'1'} fontWeight={'medium'}>
+        <Text
+          paddingY={disabled ? 1 : 0}
+          color={'white'}
+          lineHeight={'1'}
+          fontWeight={'medium'}
+        >
           {label}
         </Text>
         {!disabled && (
@@ -106,7 +124,7 @@ const Value: React.FC<
             onMouseDown={onRemove}
             variant={'transparent'}
             size={20}
-            iconSize={12}
+            iconSize={16}
             tabIndex={-1}
             className={'text-white font-medium'}
           />

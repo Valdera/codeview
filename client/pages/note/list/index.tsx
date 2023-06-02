@@ -1,9 +1,11 @@
-import { Grid, useBreakpointValue, VStack } from '@chakra-ui/react';
+import { ChevronRightIcon } from '@chakra-ui/icons';
+import { Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import PreviewCarousel from '@components/carousels/preview/PreviewCarousel';
+import CollectionCarouselCard from '@components/collection/cards/carousel/CollectionCarouselCard';
+import SearchBar from '@components/inputs/search/SearchBar';
 import PrimaryLayout from '@components/layouts/primary/PrimaryLayout';
-import NoteListTable from '@components/note/table/list/NoteListTable';
-import SegmentStat from '@components/stats/segment/SegmentStat';
-import { Note, Tag } from '@lib/types';
+import NoteListCard from '@components/note/cards/list/NoteListCard';
+import { CollectionPreview, Note } from '@lib/types';
 import { NextPageWithLayout } from '@pages/page';
 import {
   GetServerSidePropsContext,
@@ -11,27 +13,15 @@ import {
   InferGetServerSidePropsType,
 } from 'next';
 
-interface IProblemListPage {
+interface INoteListPage {
   notes: Note[];
-  tags: Tag[];
+  collectionPreview: CollectionPreview[];
 }
 
-const ProblemListPage: NextPageWithLayout<IProblemListPage> = ({
+const NoteListPage: NextPageWithLayout<INoteListPage> = ({
   notes,
-  tags,
+  collectionPreview,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const filterWrapper: 'accordion' | 'box' =
-    useBreakpointValue(
-      {
-        base: 'accordion',
-        md: 'box',
-      },
-      {
-        ssr: true,
-        fallback: 'box',
-      }
-    ) ?? 'box';
-
   return (
     <VStack width={'full'} gap={5}>
       <Grid
@@ -39,86 +29,104 @@ const ProblemListPage: NextPageWithLayout<IProblemListPage> = ({
         gridTemplateColumns={{ base: '1fr', lg: 'max-content 1fr' }}
         gridTemplateRows={{ base: 'max-content 200px', lg: 'max-content' }}
         gap={5}
+        alignItems={'center'}
       >
-        <SegmentStat
-          total={'200 Question'}
-          data={[
-            {
-              label: 'Easy Problems',
-              count: '10',
-              part: 30,
-              color: '#4FD1C5',
-            },
-            {
-              label: 'Medium Problems',
-              count: '10',
-              part: 30,
-              color: '#F6E05E',
-            },
-            {
-              label: 'Hard Problems',
-              count: '10',
-              part: 40,
-              color: '#F56565',
-            },
-          ]}
-        />
-        <PreviewCarousel />
+        <Flex
+          padding={'5'}
+          backgroundColor={'foreground'}
+          shadow={'md'}
+          flexDir={{ base: 'row', lg: 'column' }}
+          borderRadius={'md'}
+          fontWeight={'semibold'}
+          cursor={'pointer'}
+          transition={'all .5s'}
+          _hover={{ backgroundColor: 'primary.600' }}
+        >
+          <Text
+            noOfLines={2}
+            fontFamily={'heading'}
+            color={'white'}
+            marginBottom={'2'}
+            height={'70px'}
+            fontSize={'3xl'}
+          >
+            Note Collections
+          </Text>
+          <ChevronRightIcon
+            color={'white'}
+            fontSize={'5xl'}
+            marginLeft={{ base: 'auto', lg: '0' }}
+            alignSelf={{ base: 'center', lg: 'start' }}
+          />
+        </Flex>
+        <Grid width={'full'} height={'90%'}>
+          <PreviewCarousel
+            contents={collectionPreview.map((item) => (
+              <CollectionCarouselCard key={item.id} {...item} />
+            ))}
+          />
+        </Grid>
       </Grid>
-      <NoteListTable data={notes} />
+      <Flex alignItems={'center'} justifyContent={'center'} width={'full'}>
+        <Grid
+          width={{ base: 'full', lg: '80%' }}
+          borderRadius={'xl'}
+          padding={'5'}
+          backgroundColor={'foreground'}
+        >
+          <SearchBar />
+        </Grid>
+      </Flex>
+
+      <Grid
+        width={'full'}
+        gridTemplateColumns={{
+          base: 'repeat(2, 1fr)',
+          lg: 'repeat(3, 1fr)',
+          xl: 'repeat(4, 1fr)',
+          '2xl': 'repeat(5, 1fr)',
+        }}
+        gap={5}
+      >
+        {notes.map((note) => (
+          <NoteListCard key={note.id} note={note} />
+        ))}
+      </Grid>
     </VStack>
   );
 };
 
-ProblemListPage.getLayout = (page) => {
+NoteListPage.getLayout = (page) => {
   return <PrimaryLayout justify={'items-start'}>{page}</PrimaryLayout>;
 };
 
 export const getServerSideProps = async (
   _context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<IProblemListPage>> => {
-  const MOCK_TAGS: Tag[] = [
-    { id: '1', label: 'Spring Boot', color: '#FC7300' },
-    { id: '2', label: 'Go', color: '#00425A' },
-    { id: '3', label: 'Java', color: '#BFDB38' },
-    { id: '4', label: 'Micronaut', color: '#F55050' },
-    {
-      id: '5',
-      label: 'Clean Architecture',
-      color: '#FF78F0',
-    },
-    {
-      id: '6',
-      label: 'Clojure',
-      color: '#243763',
-    },
-  ];
-
+): Promise<GetServerSidePropsResult<INoteListPage>> => {
   const MOCK_NOTES: Note[] = [
     {
       id: '1',
       title: 'The Paradigm Mismatch',
-      slug: '/problem/detail/1',
       tags: [
         { id: '1', label: 'Spring Boot', color: '#FC7300' },
         { id: '3', label: 'Java', color: '#BFDB38' },
       ],
-      references: ['Java Persistence by Oreilly'],
+      status: 'DRAFT',
+      emoji: '1f92a',
     },
     {
       id: '2',
       title: 'The Paradigm Mismatch',
-      slug: '/problem/detail/2',
       tags: [
         { id: '1', label: 'Spring Boot', color: '#FC7300' },
         { id: '3', label: 'Java', color: '#BFDB38' },
       ],
-      references: ['Java Persistence by Oreilly'],
+      status: 'PUBLISHED',
+      emoji: '1f92a',
     },
     {
       id: '3',
       title: 'Micronaut Hexa Architecture',
-      slug: '/problem/detail/3',
       tags: [
         { id: '4', label: 'Micronaut', color: '#F55050' },
         {
@@ -127,16 +135,119 @@ export const getServerSideProps = async (
           color: '#FF78F0',
         },
       ],
-      references: ['Java Persistence by Oreilly'],
+      status: 'DRAFT',
+      emoji: '1f92a',
+    },
+    {
+      id: '4',
+      title: 'The Paradigm Mismatch',
+      tags: [
+        { id: '1', label: 'Spring Boot', color: '#FC7300' },
+        { id: '3', label: 'Java', color: '#BFDB38' },
+      ],
+      status: 'DRAFT',
+      emoji: '1f92a',
+    },
+    {
+      id: '5',
+      title: 'The Paradigm Mismatch',
+      tags: [
+        { id: '1', label: 'Spring Boot', color: '#FC7300' },
+        { id: '3', label: 'Java', color: '#BFDB38' },
+        { id: '3', label: 'Java', color: '#BFDB38' },
+      ],
+      status: 'PUBLISHED',
+      emoji: '1f92a',
+    },
+    {
+      id: '6',
+      title: 'Micronaut Hexa Architecture',
+      tags: [
+        { id: '4', label: 'Micronaut', color: '#F55050' },
+        {
+          id: '5',
+          label: 'Clean Architecture',
+          color: '#FF78F0',
+        },
+      ],
+      status: 'DRAFT',
+      emoji: '1f92a',
+    },
+  ];
+
+  const MOCK_COLLECTION_PREVIEW: CollectionPreview[] = [
+    {
+      id: '1',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '2',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '3',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '4',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '5',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '6',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '7',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
+    },
+    {
+      id: '8',
+      title: 'Java Spring Boot',
+      tags: [
+        { id: '1', label: 'Array', color: '#FC7300' },
+        { id: '2', label: 'Binary Tree', color: '#00425A' },
+      ],
     },
   ];
 
   return {
     props: {
       notes: MOCK_NOTES,
-      tags: MOCK_TAGS,
+      collectionPreview: MOCK_COLLECTION_PREVIEW,
     },
   };
 };
 
-export default ProblemListPage;
+export default NoteListPage;

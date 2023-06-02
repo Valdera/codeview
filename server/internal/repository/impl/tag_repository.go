@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -141,9 +140,7 @@ func (r *tagRepository) DeleteTagById(ctx context.Context, id uint) error {
 	if err := r.db.Model(&entity.Tag{}).
 		Count(&total).
 		Where("id = ?", id).
-		Updates(&entity.Tag{
-			DeletedAt: time.Now(),
-		}).
+		Delete(&entity.Tag{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Tag Repository - DeleteTagById : %v\n", err)
 		return err

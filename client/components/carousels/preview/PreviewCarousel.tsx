@@ -1,174 +1,66 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  HStack,
-  Image,
-  Tag as ChakraTag,
-  useBreakpointValue,
-} from '@chakra-ui/react';
-
-import { Tag } from '@lib/types/';
+import { useBreakpointValue } from '@chakra-ui/react';
+import { Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Autoplay } from 'swiper';
+import { ReactNode } from 'react';
 import 'swiper/css';
 
-export interface ICarouselCard {
-  title: string;
-  image: string;
-  tags: Tag[];
-}
-
-const CarouselCard: React.FC<ICarouselCard> = ({ title, image, tags }) => {
-  console.log(image);
-
-  return (
-    <Box rounded={'md'} width={'full'} height={'full'}>
-      <Image
-        zIndex={-2}
-        width={'full'}
-        height={'full'}
-        position={'absolute'}
-        rounded={'md'}
-        src={image}
-        alt={title}
-      />
-      <Box
-        zIndex={-1}
-        width={'full'}
-        height={'full'}
-        position={'absolute'}
-        rounded={'md'}
-        backgroundColor={'primary.500'}
-        opacity={0.7}
-      />
-      <Flex flexDir={'column'} gap={3} padding={3} height={'full'}>
-        <Heading color={'white'} fontSize={'3xl'}>
-          {title}
-        </Heading>
-        <HStack>
-          {tags.map((tag) => (
-            <ChakraTag
-              fontWeight={'bold'}
-              size={'sm'}
-              key={tag.id}
-              backgroundColor={tag.color}
-              color={'white'}
-            >
-              {tag.label}
-            </ChakraTag>
-          ))}
-        </HStack>
-        <Button
-          size={'sm'}
-          width={'100px'}
-          color={'primary.500'}
-          marginTop={'auto'}
-        >
-          See More
-        </Button>
-      </Flex>
-    </Box>
-  );
+const DEFAULT_SLIDES_WIDTH: Partial<Record<string, string>> = {
+  base: '100%',
+  md: '400px',
 };
 
-const data = [
-  {
-    image: '/assets/cover_1.png',
-    title: 'Java Spring Boot',
-    tags: [
-      { id: '1', label: 'Array', color: '#FC7300' },
-      { id: '2', label: 'Binary Tree', color: '#00425A' },
-    ],
-  },
-  {
-    image: '/assets/cover_2.png',
-    title: 'Java Spring Boot',
-    tags: [
-      { id: '1', label: 'Array', color: '#FC7300' },
-      { id: '2', label: 'Binary Tree', color: '#00425A' },
-    ],
-  },
-  {
-    image: '/assets/cover_2.png',
-    title: 'Java Spring Boot',
-    tags: [
-      { id: '1', label: 'Array', color: '#FC7300' },
-      { id: '2', label: 'Binary Tree', color: '#00425A' },
-    ],
-  },
-  {
-    image: '/assets/cover_1.png',
-    title: 'Java Spring Boot',
-    tags: [
-      { id: '1', label: 'Array', color: '#FC7300' },
-      { id: '2', label: 'Binary Tree', color: '#00425A' },
-    ],
-  },
-  {
-    image: '/assets/cover_1.png',
-    title: 'Java Spring Boot',
-    tags: [
-      { id: '1', label: 'Array', color: '#FC7300' },
-      { id: '2', label: 'Binary Tree', color: '#00425A' },
-    ],
-  },
-  {
-    image: '/assets/cover_1.png',
-    title: 'Java Spring Boot',
-    tags: [
-      { id: '1', label: 'Array', color: '#FC7300' },
-      { id: '2', label: 'Binary Tree', color: '#00425A' },
-    ],
-  },
-];
+const DEFAULT_SLIDES_PER_VIEW: Partial<Record<string, number>> = {
+  base: 1,
+  md: 2,
+  lg: 1,
+  xl: 2,
+  '2xl': 4,
+};
 
-const PreviewCarousel = () => {
-  const slideWidth = useBreakpointValue(
-    {
-      base: '100%',
-      md: '400px',
-    },
-    {
-      ssr: true,
-      fallback: '100%',
-    }
-  );
+export interface IPreviewCarousel {
+  slidesPerView?: Partial<Record<string, number>>;
+  slidesWidth?: Partial<Record<string, string>>;
+  contents: ReactNode[];
+  onSlideChange?: () => void;
+  onSwiper?: () => void;
+}
 
-  const slidesPerView = useBreakpointValue(
-    {
-      base: 1,
-      md: 2,
-      lg: 1,
-      xl: 2,
-      '2xl': 4,
-    },
-    {
-      ssr: true,
-      fallback: '1',
-    }
-  );
+const PreviewCarousel: React.FC<IPreviewCarousel> = ({
+  contents,
+  slidesPerView = DEFAULT_SLIDES_PER_VIEW,
+  slidesWidth = DEFAULT_SLIDES_WIDTH,
+  onSlideChange = () => {},
+  onSwiper = () => {},
+}) => {
+  const slidesWidthValue = useBreakpointValue(slidesWidth, {
+    ssr: true,
+    fallback: '100%',
+  });
+
+  const slidesPerViewValue = useBreakpointValue(slidesPerView, {
+    ssr: true,
+    fallback: '1',
+  });
 
   return (
     <>
       <Swiper
         className={'w-full h-full'}
         spaceBetween={10}
-        slidesPerView={slidesPerView ?? 1}
-        onSlideChange={() => console.log('slide change')}
-        onSwiper={(swiper) => console.log(swiper)}
+        slidesPerView={slidesPerViewValue ?? 1}
+        onSlideChange={onSlideChange}
+        onSwiper={onSwiper}
         loop={true}
         modules={[Autoplay]}
         autoplay={{
-          delay: 2500,
+          delay: 3000,
           disableOnInteraction: true,
         }}
       >
-        {data.map((item, i) => (
-          <SwiperSlide key={i} style={{ width: slideWidth }}>
-            <CarouselCard {...item} />
+        {contents.map((content, i) => (
+          <SwiperSlide key={i} style={{ width: slidesWidthValue }}>
+            {content}
           </SwiperSlide>
         ))}
       </Swiper>

@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -141,9 +140,8 @@ func (r *difficultyRepository) DeleteDifficultyById(ctx context.Context, id uint
 	if err := r.db.Model(&entity.Difficulty{}).
 		Count(&total).
 		Where("id = ?", id).
-		Updates(&entity.Difficulty{
-			DeletedAt: time.Now(),
-		}).Error; err != nil {
+		Delete(&entity.Difficulty{}).
+		Error; err != nil {
 		log.Printf("[ERROR] Difficulty Repository - DeleteDifficultyById : %v\n", err)
 		return err
 	}

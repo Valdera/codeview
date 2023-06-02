@@ -1,15 +1,17 @@
-import { Note, NoteItem, NoteMetadata } from '@lib/types';
+import { Note, NoteItem } from '@lib/types';
 import { StateCreator } from 'zustand';
 
 export interface NoteSlice {
   note: Note | null;
   load: (note: Note) => void;
-  updateNote: (body: NoteMetadata) => void;
+  updateNote: (body: {
+    title: string;
+    tags: string[];
+    emoji: string;
+    status: string;
+  }) => void;
   createNoteItem: () => void;
-  updateNoteItem: (
-    id: string,
-    body: { header: string; content: string }
-  ) => void;
+  updateNoteItem: (id: string, body: { content: string }) => void;
   deleteNoteItem: (id: string) => void;
   reorderNoteItem: (from: number, to: number) => void;
 }
@@ -20,14 +22,18 @@ export const createNoteSlice: StateCreator<NoteSlice> = (set, get) => {
     load: (note) => {
       set({ note });
     },
-    updateNote: ({ title, tags }) => {
+    updateNote: (value) => {
       const note = get().note;
       if (!note) return;
 
       // TODO: Update Note through backend
 
-      note.title = title;
-      note.tags = tags;
+      // note.title = title;
+      // note.tags = tags;
+      // note.emoji = emoji;
+      // note.status = status;
+
+      console.log('value to be post: ', value);
 
       set({ note });
     },
@@ -40,7 +46,6 @@ export const createNoteSlice: StateCreator<NoteSlice> = (set, get) => {
 
       const noteItem: NoteItem = {
         id: Date.now().toString(),
-        header: 'Untitled',
         content: `<h2 style="text-align: center; margin-left: 0px!important;"><strong>Heading</strong></h2>`,
         numOrder: note.items.length,
       };
@@ -49,7 +54,7 @@ export const createNoteSlice: StateCreator<NoteSlice> = (set, get) => {
 
       set({ note });
     },
-    updateNoteItem: (id, { header, content }) => {
+    updateNoteItem: (id, { content }) => {
       const note = get().note;
       if (!note || !note.items) return;
 
@@ -57,7 +62,7 @@ export const createNoteSlice: StateCreator<NoteSlice> = (set, get) => {
 
       note.items = note.items.map((item) => {
         if (item.id == id) {
-          return { ...item, header: header, content: content };
+          return { ...item, content: content };
         }
         return item;
       });
@@ -78,20 +83,12 @@ export const createNoteSlice: StateCreator<NoteSlice> = (set, get) => {
       const note = get().note;
       if (!note || !note.items) return;
 
-      console.log(
-        'BEFORE: ',
-        note.items.forEach((t) => console.log(t))
-      );
+      // TODO: Reorder note item through backend
 
       const items = [...note.items];
       const [removed] = items.splice(from, 1);
       items.splice(to, 0, removed);
       note.items = items;
-
-      console.log(
-        'AFTER: ',
-        note.items.forEach((t) => console.log(t))
-      );
 
       set({ note });
     },

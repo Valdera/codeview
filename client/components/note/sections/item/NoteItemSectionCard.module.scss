@@ -1,0 +1,11 @@
+.itemDragging {
+  @apply shadow-sm;
+}
+
+.item {
+  @apply hover:shadow-sm hover:transition-all;
+}
+
+.dragHandle {
+  @apply flex items-center justify-center h-full bg-primary-600 px-1 rounded-l-md;
+}

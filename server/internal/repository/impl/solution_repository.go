@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -140,9 +139,7 @@ func (r *solutionRepository) DeleteSolutionById(ctx context.Context, id uint) er
 	if err := r.db.Model(&entity.Solution{}).
 		Count(&total).
 		Where("id = ?", id).
-		Updates(&entity.Solution{
-			DeletedAt: time.Now(),
-		}).
+		Delete(&entity.Solution{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Solution Repository - DeleteSolutionById : %v\n", err)
 		return err

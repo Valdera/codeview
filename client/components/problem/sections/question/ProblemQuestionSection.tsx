@@ -1,5 +1,5 @@
-import { Box, Heading, Highlight, HStack } from '@chakra-ui/react';
-import RichTextEditor from '@components/rte/RichTextEditor';
+import { Box, Heading, Highlight } from '@chakra-ui/react';
+import RichTextEditor from '@components/inputs/rte/RichTextEditor';
 import { useProblemStore } from '@lib/stores';
 import { Question } from '@lib/types';
 
@@ -15,22 +15,7 @@ const ProblemQuestionSection: React.FC<IProblemQuestionSection> = ({
   const { updateQuestion } = useProblemStore();
 
   return (
-    <Box width={'full'} padding={'5'} backgroundColor={'white'}>
-      <HStack
-        width={'full'}
-        marginBottom={5}
-        display={'flex'}
-        alignItems={'center'}
-      >
-        <Heading as={'h3'} size={'md'}>
-          <Highlight
-            query={'question'}
-            styles={{ px: '2', py: '1', rounded: 'full', bg: 'teal.100' }}
-          >
-            Question
-          </Highlight>
-        </Heading>
-      </HStack>
+    <Box width={'full'} padding={'5'} backgroundColor={'foreground'}>
       <RichTextEditor
         content={question.content}
         onSave={(content) => {
@@ -39,6 +24,16 @@ const ProblemQuestionSection: React.FC<IProblemQuestionSection> = ({
           });
         }}
         disabled={disabled}
+        heading={
+          <Heading as={'h3'} size={'md'}>
+            <Highlight
+              query={'question'}
+              styles={{ px: '2', py: '1', rounded: 'full', bg: 'teal.100' }}
+            >
+              Question
+            </Highlight>
+          </Heading>
+        }
       />
     </Box>
   );

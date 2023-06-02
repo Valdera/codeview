@@ -1,15 +1,16 @@
-import {
-  Problem,
-  ProblemMetadata,
-  Question,
-  Solution,
-} from '@lib/types/problem';
+import { Problem, Question, Solution } from '@lib/types';
 import { StateCreator } from 'zustand';
 
 export interface ProblemSlice {
   problem: Problem | null;
   load: (problem: Problem) => void;
-  updateProblem: (body: ProblemMetadata) => void;
+  updateProblem: (body: {
+    title: string;
+    difficulty: string;
+    rating: number;
+    sources: string[];
+    tags: string[];
+  }) => void;
   createSolution: () => void;
   updateSolution: (id: string, body: { content: string }) => void;
   deleteSolution: (id: string) => void;
@@ -21,6 +22,21 @@ export const createProblemSlice: StateCreator<ProblemSlice> = (set, get) => {
   return {
     problem: null,
     load: (problem) => {
+      set({ problem });
+    },
+    updateProblem: (value) => {
+      const problem = get().problem;
+      if (!problem) return;
+
+      // TODO: Update problem through backend
+
+      // problem.title = title
+      // problem.difficulty = difficulty;
+      // problem.rating = rating;
+      // problem.sources = sources;
+      // problem.tags = tags;
+      console.log('value to be post: ', value);
+
       set({ problem });
     },
     createSolution: () => {
@@ -85,20 +101,6 @@ export const createProblemSlice: StateCreator<ProblemSlice> = (set, get) => {
       if (!problem || !problem.question) return;
 
       problem.question.content = content;
-
-      set({ problem });
-    },
-    updateProblem: ({ title, difficulty, rating, sources, tags }) => {
-      const problem = get().problem;
-      if (!problem) return;
-
-      // TODO: Update problem through backend
-
-      problem.title = title;
-      problem.difficulty = difficulty;
-      problem.rating = rating;
-      problem.sources = sources;
-      problem.tags = tags;
 
       set({ problem });
     },

@@ -1,9 +1,13 @@
 package response
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Difficulty struct {
-	ID        uint      `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	Label     string    `json:"label"`
 	Color     string    `json:"color"`
 	CreatedAt time.Time `json:"created_at"`

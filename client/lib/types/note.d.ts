@@ -1,22 +1,22 @@
 import { Tag } from './metadata';
 
-export interface NoteMetadata {
+export type NoteStatus = 'DRAFT' | 'PUBLISHED';
+
+export type Note = {
+  id: string;
   title: string;
   tags: Tag[];
-}
-
-export type Note = NoteMetadata & {
-  id: string;
-  references: string[];
+  emoji: string;
+  status: NoteStatus;
   items?: NoteItem[];
-  slug?: string;
   createdAt?: string;
+  updatedAt?: string;
 };
 
 export interface NoteItem {
   id: string;
   numOrder: number;
-  header: string;
   content: string;
   createdAt?: string;
+  updatedAt?: string;
 }

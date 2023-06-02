@@ -1,7 +1,7 @@
-import { Input } from '@mantine/core';
+import { Input, InputProps } from '@mantine/core';
 import { ChangeEventHandler, ReactNode, useId } from 'react';
 
-export interface ITextInput {
+export interface ITextInput extends InputProps {
   value?: string;
   disabled?: boolean;
   label?: string;
@@ -17,6 +17,7 @@ const TextInput: React.FC<ITextInput> = ({
   placeholder = '',
   icon = false,
   onChange = () => {},
+  ...props
 }) => {
   const id = useId();
 
@@ -27,7 +28,7 @@ const TextInput: React.FC<ITextInput> = ({
       styles={(theme) => ({
         label: {
           marginBottom: '5px',
-          color: theme.colors.primary[7],
+          color: theme.colors.gray[2],
         },
       })}
     >
@@ -40,8 +41,8 @@ const TextInput: React.FC<ITextInput> = ({
         icon={icon}
         styles={(theme) => ({
           input: {
-            backgroundColor: '#EDF2F7',
-            color: theme.colors.gray[9],
+            backgroundColor: theme.colors.background,
+            color: theme.colors.gray[2],
             fontWeight: 400,
             borderColor: 'transparent',
             outline: 'none',
@@ -55,6 +56,7 @@ const TextInput: React.FC<ITextInput> = ({
             },
           },
         })}
+        {...props}
       />
     </Input.Wrapper>
   );

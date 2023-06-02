@@ -1,9 +1,12 @@
-CREATE TYPE role AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "role" AS ENUM ('USER', 'ADMIN');
 
 CREATE TABLE IF NOT EXISTS "users" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "email" VARCHAR(50) UNIQUE NOT NULL,
     "username" VARCHAR(50) UNIQUE NOT NULL,
     "password" TEXT NOT NULL,
-    "role" role NOT NULL
+    "role" role NOT NULL DEFAULT 'USER',
+    "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "deleted_at" TIMESTAMP DEFAULT NULL
 );

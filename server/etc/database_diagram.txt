@@ -1,98 +1,151 @@
 
-Table problem {
-  id int
-  title varchar
-  difficulty_id int
-  rating int 
-  created_at timestamp
-  updated_at timestamp
+Table problems {
+  id UUID
+  title VARCHAR(100)
+  difficulty_id INTEGER
+  rating INTEGER
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP
   Indexes {
     (id) [pk]
   }
 }
 
-Table difficulty {
-  id int
-  label varchar 
-  color varchar 
-  created_at timestamp
-  updated_at timestamp
+Table difficulties {
+  id UUID
+  label VARCHAR(10) 
+  color VARCHAR(7) 
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP
   Indexes {
     (id) [pk]
   }  
 }
 
-Table tag {
-  id int 
-  label varchar 
-  color varchar
-  created_at timestamp
-  updated_at timestamp
+Enum tag_type {
+  "PROBLEM"
+  "NOTE"
+}
+
+Table tags {
+  id UUID 
+  tag_type tag_type
+  label VARCHAR(20) 
+  color VARCHAR(7)
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP
   Indexes {
     (id) [pk]
   }
 }
 
-Table problem_tag {
-  id int 
-  problem_id int 
-  tag_id int 
-  created_at timestamp
-  updated_at timestamp
+Table problems_tags {
+  id UUID 
+  problem_id UUID
+  tag_id UUID
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP
   Indexes {
     (id) [pk]
   }
 }
 
 
-Table source {
-  id int 
-  label varchar
-  color varchar 
-  created_at timestamp 
-  updated_at timestamp 
+Table sources {
+  id UUID 
+  label VARCHAR(20)
+  color VARCHAR(7) 
+  created_at TIMESTAMP 
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP 
   Indexes {
     (id) [pk]
   }
 }
 
-Table problem_source {
-  id int 
-  problem_id int 
-  source_id int 
-  created_at timestamp 
-  updated_at timestamp 
+Table problems_sources {
+  id UUID
+  problem_id UUID 
+  source_id UUID 
+  created_at TIMESTAMP 
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP 
   Indexes {
     (id) [pk]
   }
 }
 
-Table question {
-  id int
-  problem_id int
-  content text 
-  created_at timestamp
-  updated_at timestamp 
+Table questions {
+  id UUID
+  problem_id UUID
+  content TEXT 
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP 
   Indexes {
     (id) [pk]
   }
 }
 
-Table solution {
-  id int
-  problem_id int
-  content text
-  created_at timestamp
-  updated_at timestamp
+Table solutions {
+  id UUID
+  problem_id UUID
+  content TEXT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP
   Indexes {
     (id) [pk]
   }
 }
 
-Ref: solution.problem_id - problem.id   
-Ref: question.problem_id - problem.id   
-Ref: problem_tag.problem_id - problem.id   
-Ref: problem_tag.tag_id - tag.id
-Ref: problem_source.problem_id - problem.id   
-Ref: problem_source.source_id - source.id   
-Ref: problem.difficulty_id - difficulty.id   
+Table notes {
+  id UUID
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Table notes_items {
+  id UUID
+  note_id UUID
+  header TEXT
+  content TEXT 
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Table notes_tags {
+  id UUID
+  note_id UUId
+  tag_id UUID
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+  deleted_at TIMESTAMP
+  Indexes {
+    (id) [pk]
+  }
+}
+
+Ref: notes_items.note_id - notes.id   
+Ref: notes_tags.note_id - notes.id   
+Ref: notes_tags.tag_id - tags.id   
+
+Ref: solutions.problem_id - problems.id   
+Ref: questions.problem_id - problems.id   
+Ref: problems_tags.problem_id - problems.id   
+Ref: problems_tags.tag_id - tags.id
+Ref: problems_sources.problem_id - problems.id   
+Ref: problems_sources.source_id - sources.id   
+Ref: problems.difficulty_id - difficulties.id   

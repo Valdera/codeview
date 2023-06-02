@@ -24,7 +24,8 @@ module.exports = {
       800: '#115e59',
       900: '#134e4a',
     },
-    background: '#EFF5EE',
+    foreground: '#2F3136',
+    background: '#202225',
   },
   fontFamily: {
     sans: ['ui-sans-serif', 'system-ui'],

@@ -10,25 +10,19 @@ import { ReactNode, useState } from 'react';
 
 const useStyles = createStyles((theme) => ({
   root: {
-    borderRadius: theme.radius.sm,
+    borderRadius: theme.radius.md,
   },
 
   item: {
-    backgroundColor: theme.colors.primary[7],
+    backgroundColor: theme.colors.primary[6],
     border: '1px solid transparent',
     position: 'relative',
     zIndex: 0,
     transition: 'transform 150ms ease',
-
     '&[data-active]': {
       transform: 'scale(1.03)',
-      backgroundColor:
-        theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+      backgroundColor: theme.colors.foreground,
       boxShadow: theme.shadows.sm,
-      borderColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[4]
-          : theme.colors.gray[2],
       borderRadius: theme.radius.md,
       zIndex: 1,
     },
@@ -40,7 +34,7 @@ const useStyles = createStyles((theme) => ({
     },
 
     '&[data-active]': {
-      color: theme.colors.primary[7],
+      // color: theme.colors.primary[7],
     },
   },
 
@@ -68,11 +62,11 @@ const ProblemFilterSection: React.FC<IProblemFilterSection> = ({
 }) => {
   const { classes } = useStyles();
 
-  const [difficulties, setDifficulties] = useState<Difficulty[]>(
+  const [difficulties, _setDifficulties] = useState<Difficulty[]>(
     data.difficulties ?? []
   );
-  const [sources, setSources] = useState<Source[]>(data.sources ?? []);
-  const [tags, setTags] = useState<Tag[]>(data.tags ?? []);
+  const [sources, _setSources] = useState<Source[]>(data.sources ?? []);
+  const [tags, _setTags] = useState<Tag[]>(data.tags ?? []);
 
   const initialValues: {
     title: string;
@@ -115,9 +109,9 @@ const ProblemFilterSection: React.FC<IProblemFilterSection> = ({
           <Box
             width={'full'}
             padding={'5'}
-            backgroundColor={'white'}
+            backgroundColor={'foreground'}
             shadow={'sm'}
-            rounded={'sm'}
+            rounded={'md'}
             className={props.className}
             display={props.display}
           >

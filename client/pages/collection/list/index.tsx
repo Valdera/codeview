@@ -1,5 +1,6 @@
-import { Grid } from '@chakra-ui/react';
-import CollectionListCard from '@components/collection/card/list/CollectionListCard';
+import { Grid, VStack } from '@chakra-ui/react';
+import CollectionListCard from '@components/collection/cards/list/CollectionListCard';
+import CollectionFilterSection from '@components/collection/sections/filter/CollectionFilterSection';
 import PrimaryLayout from '@components/layouts/primary/PrimaryLayout';
 import { Collection } from '@lib/types';
 import { NextPageWithLayout } from '@pages/page';
@@ -13,13 +14,17 @@ const CollectionListPage: NextPageWithLayout<ICollectionListPage> = ({
   collections,
 }) => {
   return (
-    <>
-      <Grid gridTemplateColumns={'1fr 1fr'} gap={5}>
+    <VStack width={'full'} gap={5}>
+      <CollectionFilterSection />
+      <Grid
+        gridTemplateColumns={{ base: '1fr', lg: '1fr 1fr', xl: '1fr 1fr 1fr' }}
+        gap={5}
+      >
         {collections.map((c) => (
           <CollectionListCard key={c.id} collection={c} />
         ))}
       </Grid>
-    </>
+    </VStack>
   );
 };
 
@@ -35,9 +40,9 @@ export const getServerSideProps = async (
       collections: [
         {
           id: '1',
-          imageUrl:
-            'https://images.unsplash.com/photo-1609557927087-f9cf8e88de18?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80',
           title: 'Spring Data JPA with Hibernate',
+          emoji: '1f4d1',
+          type: 'PROBLEM',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae dolores, possimus pariatur animi temporibus nesciunt praesentium dolore sed nulla ipsum eveniet corporis quidem, mollitia itaque minus soluta, voluptates neque explicabo tempora nisi culpa eiusatque dignissimos. Molestias explicabo corporis voluptatem?',
           tags: [
@@ -56,13 +61,12 @@ export const getServerSideProps = async (
               color: '#243763',
             },
           ],
-          createdAt: '2015-03-25',
         },
         {
           id: '2',
-          imageUrl:
-            'https://images.unsplash.com/photo-1609557927087-f9cf8e88de18?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80',
           title: 'Spring Data JPA with Hibernate',
+          emoji: '1f4d3',
+          type: 'NOTE',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae dolores, possimus pariatur animi temporibus nesciunt praesentium dolore sed nulla ipsum eveniet corporis quidem, mollitia itaque minus soluta, voluptates neque explicabo tempora nisi culpa eiusatque dignissimos. Molestias explicabo corporis voluptatem?',
           tags: [
@@ -81,13 +85,12 @@ export const getServerSideProps = async (
               color: '#243763',
             },
           ],
-          createdAt: '2015-03-25',
         },
         {
           id: '3',
-          imageUrl:
-            'https://images.unsplash.com/photo-1609557927087-f9cf8e88de18?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80',
           title: 'Spring Data JPA with Hibernate',
+          emoji: '1f4d3',
+          type: 'NOTE',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae dolores, possimus pariatur animi temporibus nesciunt praesentium dolore sed nulla ipsum eveniet corporis quidem, mollitia itaque minus soluta, voluptates neque explicabo tempora nisi culpa eiusatque dignissimos. Molestias explicabo corporis voluptatem?',
           tags: [
@@ -106,13 +109,12 @@ export const getServerSideProps = async (
               color: '#243763',
             },
           ],
-          createdAt: '2015-03-25',
         },
         {
           id: '4',
-          imageUrl:
-            'https://images.unsplash.com/photo-1609557927087-f9cf8e88de18?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80',
           title: 'Spring Data JPA with Hibernate',
+          emoji: '1f4d1',
+          type: 'PROBLEM',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae dolores, possimus pariatur animi temporibus nesciunt praesentium dolore sed nulla ipsum eveniet corporis quidem, mollitia itaque minus soluta, voluptates neque explicabo tempora nisi culpa eiusatque dignissimos. Molestias explicabo corporis voluptatem?',
           tags: [
@@ -131,7 +133,6 @@ export const getServerSideProps = async (
               color: '#243763',
             },
           ],
-          createdAt: '2015-03-25',
         },
       ],
     },

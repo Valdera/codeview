@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS "problems" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "title" VARCHAR(50) NOT NULL,
+  "emoji" VARCHAR(10) NOT NULL,
   "difficulty_id" UUID NOT NULL,
   "rating" INTEGER DEFAULT 0 NOT NULL,
   CHECK ("rating" >= 0),

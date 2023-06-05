@@ -11,6 +11,8 @@ import (
 	"codeview/internal/util/pagination"
 	"context"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 type solutionService struct {
@@ -26,8 +28,15 @@ func NewSolutionService(cfg config.AppConfig, solutionRepo repository.SolutionRe
 }
 
 func (s *solutionService) CreateSolution(ctx context.Context, body *request.SolutionCreate) (*response.Solution, error) {
+	problemId, err := uuid.Parse(body.ProblemID)
+	if err != nil {
+		log.Printf("[ERROR] Solution Service - CreateSolution : %v\n", err)
+		return nil, err
+	}
+
 	solution, err := s.solutionRepo.CreateSolution(ctx, &entity.Solution{
-		Content: body.Content})
+		ProblemID: problemId,
+		Content:   body.Content})
 	if err != nil {
 		log.Printf("[ERROR] Solution Service - CreateSolution : %v\n", err)
 		return nil, err
@@ -62,7 +71,7 @@ func (s *solutionService) GetSolutions(ctx context.Context, p *pagination.Pagina
 	return responses, nil
 }
 
-func (s *solutionService) GetSolutionById(ctx context.Context, id uint) (*response.Solution, error) {
+func (s *solutionService) GetSolutionById(ctx context.Context, id uuid.UUID) (*response.Solution, error) {
 	solution, err := s.solutionRepo.GetSolutionById(ctx, id)
 	if err != nil {
 		log.Printf("[ERROR] Solution Service - GetSolutionById : %v\n", err)
@@ -78,7 +87,7 @@ func (s *solutionService) GetSolutionById(ctx context.Context, id uint) (*respon
 	return response, nil
 }
 
-func (s *solutionService) GetSolutionsByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]response.Solution, error) {
+func (s *solutionService) GetSolutionsByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]response.Solution, error) {
 	solutions, err := s.solutionRepo.GetSolutionsByIds(ctx, ids, p)
 	if err != nil {
 		log.Printf("[ERROR] Solution Service - GetSolutionsByIds : %v\n", err)
@@ -98,7 +107,7 @@ func (s *solutionService) GetSolutionsByIds(ctx context.Context, ids []uint, p *
 	return responses, nil
 }
 
-func (s *solutionService) UpdateSolutionById(ctx context.Context, id uint, body *request.SolutionUpdate) (*response.Solution, error) {
+func (s *solutionService) UpdateSolutionById(ctx context.Context, id uuid.UUID, body *request.SolutionUpdate) (*response.Solution, error) {
 	solution, err := s.solutionRepo.UpdateSolutionById(ctx, id, &entity.Solution{
 		Content: body.Content,
 	})
@@ -116,7 +125,7 @@ func (s *solutionService) UpdateSolutionById(ctx context.Context, id uint, body 
 	return response, err
 }
 
-func (s *solutionService) DeleteSolutionById(ctx context.Context, id uint) error {
+func (s *solutionService) DeleteSolutionById(ctx context.Context, id uuid.UUID) error {
 	if err := s.solutionRepo.DeleteSolutionById(ctx, id); err != nil {
 		log.Printf("[ERROR] Solution Service - DeleteSolutionById : %v\n", err)
 		return err

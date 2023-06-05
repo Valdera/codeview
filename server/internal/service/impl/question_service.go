@@ -11,6 +11,8 @@ import (
 	"codeview/internal/util/pagination"
 	"context"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 type questionService struct {
@@ -63,7 +65,7 @@ func (s *questionService) GetQuestions(ctx context.Context, p *pagination.Pagina
 	return responses, nil
 }
 
-func (s *questionService) GetQuestionById(ctx context.Context, id uint) (*response.Question, error) {
+func (s *questionService) GetQuestionById(ctx context.Context, id uuid.UUID) (*response.Question, error) {
 	question, err := s.questionRepo.GetQuestionById(ctx, id)
 	if err != nil {
 		log.Printf("[ERROR] Question Service - GetQuestionById : %v\n", err)
@@ -79,7 +81,7 @@ func (s *questionService) GetQuestionById(ctx context.Context, id uint) (*respon
 	return response, nil
 }
 
-func (s *questionService) GetQuestionsByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]response.Question, error) {
+func (s *questionService) GetQuestionsByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]response.Question, error) {
 	questions, err := s.questionRepo.GetQuestionsByIds(ctx, ids, p)
 	if err != nil {
 		log.Printf("[ERROR] Question Service - GetQuestionsByIds : %v\n", err)
@@ -99,7 +101,7 @@ func (s *questionService) GetQuestionsByIds(ctx context.Context, ids []uint, p *
 	return responses, nil
 }
 
-func (s *questionService) UpdateQuestionById(ctx context.Context, id uint, body *request.QuestionUpdate) (*response.Question, error) {
+func (s *questionService) UpdateQuestionById(ctx context.Context, id uuid.UUID, body *request.QuestionUpdate) (*response.Question, error) {
 	question, err := s.questionRepo.UpdateQuestionById(ctx, id, &entity.Question{
 		Content: body.Content,
 	})
@@ -117,7 +119,7 @@ func (s *questionService) UpdateQuestionById(ctx context.Context, id uint, body 
 	return response, err
 }
 
-func (s *questionService) DeleteQuestionById(ctx context.Context, id uint) error {
+func (s *questionService) DeleteQuestionById(ctx context.Context, id uuid.UUID) error {
 	if err := s.questionRepo.DeleteQuestionById(ctx, id); err != nil {
 		log.Printf("[ERROR] Question Service - DeleteQuestionById : %v\n", err)
 		return err

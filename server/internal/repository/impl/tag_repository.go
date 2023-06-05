@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -35,21 +36,21 @@ func (r *tagRepository) CreateTag(ctx context.Context, body *entity.Tag) (*entit
 	return body, nil
 }
 
-func (r *tagRepository) GetTagById(ctx context.Context, id uint) (*entity.Tag, error) {
+func (r *tagRepository) GetTagById(ctx context.Context, id uuid.UUID) (*entity.Tag, error) {
 	var result entity.Tag
 	var total int64
 
 	if err := r.db.Model(&entity.Tag{}).
-		Count(&total).
 		Where("id = ?", id).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Tag Repository - GetTagById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("tag with id %d does not exists", id)
+		err := fmt.Errorf("tag with id %s does not exists", id)
 		log.Printf("[ERROR] Tag Repository - GetTagById : %v\n", err)
 		return nil, err
 	}
@@ -68,10 +69,10 @@ func (r *tagRepository) GetTags(ctx context.Context, p *pagination.Pagination) (
 	}
 
 	if err := r.db.Model(&entity.Tag{}).
-		Count(&total).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Tag Repository - GetTags : %v\n", err)
 		return nil, err
@@ -83,7 +84,7 @@ func (r *tagRepository) GetTags(ctx context.Context, p *pagination.Pagination) (
 	return results, nil
 }
 
-func (r *tagRepository) GetTagsByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]entity.Tag, error) {
+func (r *tagRepository) GetTagsByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]entity.Tag, error) {
 	var results []entity.Tag
 	var total int64
 
@@ -94,11 +95,11 @@ func (r *tagRepository) GetTagsByIds(ctx context.Context, ids []uint, p *paginat
 	}
 
 	if err := r.db.Model(&entity.Tag{}).
-		Count(&total).
 		Where("id IN (?)", ids).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Tag Repository - GetTagsByIds : %v\n", err)
 		return nil, err
@@ -110,23 +111,23 @@ func (r *tagRepository) GetTagsByIds(ctx context.Context, ids []uint, p *paginat
 	return results, nil
 }
 
-func (r *tagRepository) UpdateTagById(ctx context.Context, id uint, body *entity.Tag) (*entity.Tag, error) {
+func (r *tagRepository) UpdateTagById(ctx context.Context, id uuid.UUID, body *entity.Tag) (*entity.Tag, error) {
 	var result entity.Tag
 	var total int64
 
 	if err := r.db.Model(&result).
-		Count(&total).
 		Where("id = ?", id).
 		Updates(&entity.Tag{
 			Label: body.Label,
 			Color: body.Color,
 		}).
+		Count(&total).
 		Error; err != nil {
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Tag Repository - UpdateTagById : %v\n", err)
 		return nil, err
 	}
@@ -134,12 +135,12 @@ func (r *tagRepository) UpdateTagById(ctx context.Context, id uint, body *entity
 	return &result, nil
 }
 
-func (r *tagRepository) DeleteTagById(ctx context.Context, id uint) error {
+func (r *tagRepository) DeleteTagById(ctx context.Context, id uuid.UUID) error {
 	var total int64
 
 	if err := r.db.Model(&entity.Tag{}).
-		Count(&total).
 		Where("id = ?", id).
+		Count(&total).
 		Delete(&entity.Tag{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Tag Repository - DeleteTagById : %v\n", err)
@@ -147,10 +148,37 @@ func (r *tagRepository) DeleteTagById(ctx context.Context, id uint) error {
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Tag Repository - DeleteTagById : %v\n", err)
 		return err
 	}
 
 	return nil
+}
+
+func (r *tagRepository) GetTagsByType(ctx context.Context, tagType entity.TagType, p *pagination.Pagination) ([]entity.Tag, error) {
+	var results []entity.Tag
+	var total int64
+
+	if p == nil {
+		err := fmt.Errorf("pagination must not empty")
+		log.Printf("[ERROR] Tag Repository - GetTags : %v\n", err)
+		return nil, err
+	}
+
+	if err := r.db.Model(&entity.Tag{}).
+		Where("tag_type = ?", tagType).
+		Offset(p.GetOffset()).
+		Limit(p.PageSize).
+		Find(&results).
+		Count(&total).
+		Error; err != nil {
+		log.Printf("[ERROR] Tag Repository - GetTags : %v\n", err)
+		return nil, err
+	}
+
+	p.Total = int(total)
+	p.SetPagination()
+
+	return results, nil
 }

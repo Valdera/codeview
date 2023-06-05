@@ -6,9 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
+type NoteStatus string
+
+const (
+	NoteStatusDraft     NoteStatus = "DRAFT"
+	NoteStatusPublished NoteStatus = "PUBLISHED"
+)
+
 type Note struct {
-	ID        uuid.UUID `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Title     string
+	Emoji     string
 	Tags      []Tag      `gorm:"many2many:notes_tags"`
 	NoteItem  []NoteItem `gorm:"foreignKey:NoteID"`
 	CreatedAt time.Time
@@ -17,9 +25,9 @@ type Note struct {
 }
 
 type NoteItem struct {
-	ID        uuid.UUID `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	NoteID    uuid.UUID
-	Header    string
+	Position  int
 	Content   string
 	CreatedAt time.Time
 	UpdatedAt time.Time

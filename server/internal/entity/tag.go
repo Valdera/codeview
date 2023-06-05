@@ -9,12 +9,13 @@ import (
 type TagType string
 
 const (
-	TagTypeNote    TagType = "NOTE"
-	TagTypeProblem TagType = "PROBLEM"
+	TagTypeNote       TagType = "NOTE"
+	TagTypeProblem    TagType = "PROBLEM"
+	TagTypeCollection TagType = "COLLECTION"
 )
 
 type Tag struct {
-	ID        uuid.UUID `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Label     string
 	Color     string
 	TagType   TagType

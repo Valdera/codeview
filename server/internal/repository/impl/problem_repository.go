@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,6 +25,13 @@ func NewProblemRepository(cfg config.AppConfig, db *gorm.DB) repository.ProblemR
 	}
 }
 
+func (r *problemRepository) WithTrx(trxHandle *gorm.DB) repository.ProblemRepository {
+	return &problemRepository{
+		cfg: r.cfg,
+		db:  trxHandle,
+	}
+}
+
 func (r *problemRepository) CreateProblem(ctx context.Context, body *entity.Problem) (*entity.Problem, error) {
 	if err := r.db.Model(&entity.Problem{}).
 		Create(body).
@@ -35,24 +43,24 @@ func (r *problemRepository) CreateProblem(ctx context.Context, body *entity.Prob
 	return body, nil
 }
 
-func (r *problemRepository) GetProblemById(ctx context.Context, id uint) (*entity.Problem, error) {
+func (r *problemRepository) GetProblemById(ctx context.Context, id uuid.UUID) (*entity.Problem, error) {
 	var result entity.Problem
 	var total int64
 
 	if err := r.db.Model(&entity.Problem{}).
-		Count(&total).
+		Where("id = ?", id).
 		Preload("Tags").Preload("Sources").
 		Preload("Difficulty").Preload("Solutions").
 		Preload("Questions").
-		Where("id = ?", id).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Problem Repository - GetProblemById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Problem Repository - GetProblemById : %v\n", err)
 		return nil, err
 	}
@@ -71,12 +79,12 @@ func (r *problemRepository) GetProblems(ctx context.Context, p *pagination.Pagin
 	}
 
 	if err := r.db.Model(&entity.Problem{}).
-		Count(&total).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Preload("Tags").Preload("Sources").
 		Preload("Difficulty").
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Problem Repository - GetProblems : %v\n", err)
 		return nil, err
@@ -88,7 +96,7 @@ func (r *problemRepository) GetProblems(ctx context.Context, p *pagination.Pagin
 	return results, nil
 }
 
-func (r *problemRepository) GetProblemsByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]entity.Problem, error) {
+func (r *problemRepository) GetProblemsByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]entity.Problem, error) {
 	var results []entity.Problem
 	var total int64
 
@@ -99,13 +107,13 @@ func (r *problemRepository) GetProblemsByIds(ctx context.Context, ids []uint, p 
 	}
 
 	if err := r.db.Model(&entity.Problem{}).
-		Count(&total).
 		Where("id IN (?)", ids).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Preload("Tags").Preload("Sources").
 		Preload("Difficulty").
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Problem Repository - GetProblemsByIds : %v\n", err)
 		return nil, err
@@ -117,24 +125,25 @@ func (r *problemRepository) GetProblemsByIds(ctx context.Context, ids []uint, p 
 	return results, nil
 }
 
-func (r *problemRepository) UpdateProblemById(ctx context.Context, id uint, body *entity.Problem) (*entity.Problem, error) {
+func (r *problemRepository) UpdateProblemById(ctx context.Context, id uuid.UUID, body *entity.Problem) (*entity.Problem, error) {
 	var result entity.Problem
 	var total int64
 
 	if err := r.db.Model(&result).
-		Count(&total).
 		Where("id = ?", id).
 		Updates(&entity.Problem{
 			Title:        body.Title,
 			Rating:       body.Rating,
+			Emoji:        body.Emoji,
 			DifficultyID: body.DifficultyID,
 		}).
+		Count(&total).
 		Error; err != nil {
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Problem Repository - UpdateProblemById : %v\n", err)
 		return nil, err
 	}
@@ -142,12 +151,12 @@ func (r *problemRepository) UpdateProblemById(ctx context.Context, id uint, body
 	return &result, nil
 }
 
-func (r *problemRepository) DeleteProblemById(ctx context.Context, id uint) error {
+func (r *problemRepository) DeleteProblemById(ctx context.Context, id uuid.UUID) error {
 	var total int64
 
 	if err := r.db.Model(&entity.Problem{}).
-		Count(&total).
 		Where("id = ?", id).
+		Count(&total).
 		Delete(&entity.Problem{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Problem Repository - DeleteProblemById : %v\n", err)
@@ -155,7 +164,7 @@ func (r *problemRepository) DeleteProblemById(ctx context.Context, id uint) erro
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Problem Repository - DeleteProblemById : %v\n", err)
 		return err
 	}

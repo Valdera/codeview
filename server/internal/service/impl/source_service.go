@@ -11,6 +11,8 @@ import (
 	"codeview/internal/util/pagination"
 	"context"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 type sourceService struct {
@@ -64,7 +66,7 @@ func (s *sourceService) GetSources(ctx context.Context, p *pagination.Pagination
 	return responses, nil
 }
 
-func (s *sourceService) GetSourceById(ctx context.Context, id uint) (*response.Source, error) {
+func (s *sourceService) GetSourceById(ctx context.Context, id uuid.UUID) (*response.Source, error) {
 	source, err := s.sourceRepo.GetSourceById(ctx, id)
 	if err != nil {
 		log.Printf("[ERROR] Source Service - GetSourceById : %v\n", err)
@@ -80,7 +82,7 @@ func (s *sourceService) GetSourceById(ctx context.Context, id uint) (*response.S
 	return response, nil
 }
 
-func (s *sourceService) GetSourcesByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]response.Source, error) {
+func (s *sourceService) GetSourcesByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]response.Source, error) {
 	sources, err := s.sourceRepo.GetSourcesByIds(ctx, ids, p)
 	if err != nil {
 		log.Printf("[ERROR] Source Service - GetSourcesByIds : %v\n", err)
@@ -100,7 +102,7 @@ func (s *sourceService) GetSourcesByIds(ctx context.Context, ids []uint, p *pagi
 	return responses, nil
 }
 
-func (s *sourceService) UpdateSourceById(ctx context.Context, id uint, body *request.SourceUpdate) (*response.Source, error) {
+func (s *sourceService) UpdateSourceById(ctx context.Context, id uuid.UUID, body *request.SourceUpdate) (*response.Source, error) {
 	source, err := s.sourceRepo.UpdateSourceById(ctx, id, &entity.Source{
 		Label: body.Label,
 		Color: body.Color,
@@ -119,7 +121,7 @@ func (s *sourceService) UpdateSourceById(ctx context.Context, id uint, body *req
 	return response, err
 }
 
-func (s *sourceService) DeleteSourceById(ctx context.Context, id uint) error {
+func (s *sourceService) DeleteSourceById(ctx context.Context, id uuid.UUID) error {
 	if err := s.sourceRepo.DeleteSourceById(ctx, id); err != nil {
 		log.Printf("[ERROR] Source Service - DeleteSourceById : %v\n", err)
 		return err

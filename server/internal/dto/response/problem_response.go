@@ -11,6 +11,7 @@ type Problem struct {
 	Title      string     `json:"title"`
 	Rating     int        `json:"rating"`
 	Difficulty Difficulty `json:"difficulty"`
+	Emoji      string     `json:"emoji"`
 	Tags       []Tag      `json:"tags"`
 	Sources    []Source   `json:"sources"`
 	Questions  []Question `json:"questions"`

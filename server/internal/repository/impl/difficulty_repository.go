@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -35,21 +36,21 @@ func (r *difficultyRepository) CreateDifficulty(ctx context.Context, body *entit
 	return body, nil
 }
 
-func (r *difficultyRepository) GetDifficultyById(ctx context.Context, id uint) (*entity.Difficulty, error) {
+func (r *difficultyRepository) GetDifficultyById(ctx context.Context, id uuid.UUID) (*entity.Difficulty, error) {
 	var result entity.Difficulty
 	var total int64
 
 	if err := r.db.Model(&entity.Difficulty{}).
-		Count(&total).
 		Where("id = ?", id).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Difficulty Repository - GetDifficultyById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("difficulty with id %d does not exists", id)
+		err := fmt.Errorf("difficulty with id %s does not exists", id)
 		log.Printf("[ERROR] Difficulty Repository - GetDifficultyById : %v\n", err)
 		return nil, err
 	}
@@ -68,10 +69,10 @@ func (r *difficultyRepository) GetDifficulties(ctx context.Context, p *paginatio
 	}
 
 	if err := r.db.Model(&entity.Difficulty{}).
-		Count(&total).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Difficulty Repository - GetDifficulties : %v\n", err)
 		return nil, err
@@ -83,7 +84,7 @@ func (r *difficultyRepository) GetDifficulties(ctx context.Context, p *paginatio
 	return results, nil
 }
 
-func (r *difficultyRepository) GetDifficultiesByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]entity.Difficulty, error) {
+func (r *difficultyRepository) GetDifficultiesByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]entity.Difficulty, error) {
 	var results []entity.Difficulty
 	var total int64
 
@@ -94,11 +95,11 @@ func (r *difficultyRepository) GetDifficultiesByIds(ctx context.Context, ids []u
 	}
 
 	if err := r.db.Model(&entity.Difficulty{}).
-		Count(&total).
 		Where("id IN (?)", ids).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Difficulty Repository - GetDifficultiesByIds : %v\n", err)
 		return nil, err
@@ -110,23 +111,23 @@ func (r *difficultyRepository) GetDifficultiesByIds(ctx context.Context, ids []u
 	return results, nil
 }
 
-func (r *difficultyRepository) UpdateDifficultyById(ctx context.Context, id uint, body *entity.Difficulty) (*entity.Difficulty, error) {
+func (r *difficultyRepository) UpdateDifficultyById(ctx context.Context, id uuid.UUID, body *entity.Difficulty) (*entity.Difficulty, error) {
 	var result entity.Difficulty
 	var total int64
 
 	if err := r.db.Model(&result).
-		Count(&total).
 		Where("id = ?", id).
 		Updates(&entity.Difficulty{
 			Label: body.Label,
 			Color: body.Color,
 		}).
+		Count(&total).
 		Error; err != nil {
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Difficulty Repository - UpdateDifficultyById : %v\n", err)
 		return nil, err
 	}
@@ -134,12 +135,12 @@ func (r *difficultyRepository) UpdateDifficultyById(ctx context.Context, id uint
 	return &result, nil
 }
 
-func (r *difficultyRepository) DeleteDifficultyById(ctx context.Context, id uint) error {
+func (r *difficultyRepository) DeleteDifficultyById(ctx context.Context, id uuid.UUID) error {
 	var total int64
 
 	if err := r.db.Model(&entity.Difficulty{}).
-		Count(&total).
 		Where("id = ?", id).
+		Count(&total).
 		Delete(&entity.Difficulty{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Difficulty Repository - DeleteDifficultyById : %v\n", err)
@@ -147,7 +148,7 @@ func (r *difficultyRepository) DeleteDifficultyById(ctx context.Context, id uint
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Difficulty Repository - DeleteDifficultyById : %v\n", err)
 		return err
 	}

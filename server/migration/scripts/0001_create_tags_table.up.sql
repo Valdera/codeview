@@ -1,11 +1,14 @@
-CREATE TYPE tag_type AS ENUM ('NOTE', 'PROBLEM');
+DROP TYPE IF EXISTS "tag_type";
+
+CREATE TYPE "tag_type" AS ENUM ('NOTE', 'PROBLEM', 'COLLECTION');
 
 CREATE TABLE IF NOT EXISTS "tags" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   "tag_type" tag_type NOT NULL DEFAULT 'PROBLEM',
-  "label" VARCHAR(20) UNIQUE NOT NULL,
+  "label" VARCHAR(20) NOT NULL,
   "color" VARCHAR(7) NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  "deleted_at" TIMESTAMP DEFAULT NULL
+  "deleted_at" TIMESTAMP DEFAULT NULL,
+  UNIQUE ("label", "tag_type")
 );

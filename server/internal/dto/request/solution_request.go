@@ -1,7 +1,8 @@
 package request
 
 type SolutionCreate struct {
-	Content string `json:"content"`
+	ProblemID string `json:"problem_id"`
+	Content   string `json:"content"`
 }
 
 type SolutionUpdate struct {

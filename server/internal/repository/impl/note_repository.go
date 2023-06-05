@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -35,22 +36,22 @@ func (r *noteRepository) CreateNote(ctx context.Context, body *entity.Note) (*en
 	return body, nil
 }
 
-func (r *noteRepository) GetNoteById(ctx context.Context, id uint) (*entity.Note, error) {
+func (r *noteRepository) GetNoteById(ctx context.Context, id uuid.UUID) (*entity.Note, error) {
 	var result entity.Note
 	var total int64
 
 	if err := r.db.Model(&entity.Note{}).
-		Count(&total).
 		Preload("NoteItem").Preload("Tags").
 		Where("id = ?", id).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Note Repository - GetNoteById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("note with id %d does not exists", id)
+		err := fmt.Errorf("note with id %s does not exists", id)
 		log.Printf("[ERROR] Note Repository - GetNoteById : %v\n", err)
 		return nil, err
 	}
@@ -69,11 +70,11 @@ func (r *noteRepository) GetNotes(ctx context.Context, p *pagination.Pagination)
 	}
 
 	if err := r.db.Model(&entity.Note{}).
-		Count(&total).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Preload("Tags").
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Note Repository - GetNotes : %v\n", err)
 		return nil, err
@@ -85,7 +86,7 @@ func (r *noteRepository) GetNotes(ctx context.Context, p *pagination.Pagination)
 	return results, nil
 }
 
-func (r *noteRepository) GetNotesByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]entity.Note, error) {
+func (r *noteRepository) GetNotesByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]entity.Note, error) {
 	var results []entity.Note
 	var total int64
 
@@ -96,13 +97,12 @@ func (r *noteRepository) GetNotesByIds(ctx context.Context, ids []uint, p *pagin
 	}
 
 	if err := r.db.Model(&entity.Note{}).
-		Count(&total).
 		Where("id IN (?)", ids).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
-		Preload("Tags").Preload("Sources").
-		Preload("Difficulty").
+		Preload("Tags").
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Note Repository - GetNotesByIds : %v\n", err)
 		return nil, err
@@ -114,22 +114,22 @@ func (r *noteRepository) GetNotesByIds(ctx context.Context, ids []uint, p *pagin
 	return results, nil
 }
 
-func (r *noteRepository) UpdateNoteById(ctx context.Context, id uint, body *entity.Note) (*entity.Note, error) {
+func (r *noteRepository) UpdateNoteById(ctx context.Context, id uuid.UUID, body *entity.Note) (*entity.Note, error) {
 	var result entity.Note
 	var total int64
 
 	if err := r.db.Model(&result).
-		Count(&total).
 		Where("id = ?", id).
 		Updates(&entity.Note{
 			Title: body.Title,
 		}).
+		Count(&total).
 		Error; err != nil {
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("note with id %d does not exists", id)
+		err := fmt.Errorf("note with id %s does not exists", id)
 		log.Printf("[ERROR] Note Repository - UpdateNoteById : %v\n", err)
 		return nil, err
 	}
@@ -137,20 +137,21 @@ func (r *noteRepository) UpdateNoteById(ctx context.Context, id uint, body *enti
 	return &result, nil
 }
 
-func (r *noteRepository) DeleteNoteById(ctx context.Context, id uint) error {
+func (r *noteRepository) DeleteNoteById(ctx context.Context, id uuid.UUID) error {
 	var total int64
 
 	if err := r.db.Model(&entity.Note{}).
-		Count(&total).
 		Where("id = ?", id).
+		Count(&total).
 		Delete(&entity.Note{}).
 		Error; err != nil {
+
 		log.Printf("[ERROR] Note Repository - DeleteNoteById : %v\n", err)
 		return err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("note with id %d does not exists", id)
+		err := fmt.Errorf("note with id %s does not exists", id)
 		log.Printf("[ERROR] Note Repository - DeleteNoteById : %v\n", err)
 		return err
 	}
@@ -169,21 +170,21 @@ func (r *noteRepository) CreateNoteItem(ctx context.Context, body *entity.NoteIt
 	return body, nil
 }
 
-func (r *noteRepository) GetNoteItemById(ctx context.Context, id uint) (*entity.NoteItem, error) {
+func (r *noteRepository) GetNoteItemById(ctx context.Context, id uuid.UUID) (*entity.NoteItem, error) {
 	var result entity.NoteItem
 	var total int64
 
 	if err := r.db.Model(&entity.NoteItem{}).
-		Count(&total).
 		Where("id = ?", id).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] NoteItem Repository - GetNoteItemById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("tag with id %d does not exists", id)
+		err := fmt.Errorf("tag with id %s does not exists", id)
 		log.Printf("[ERROR] NoteItem Repository - GetNoteItemById : %v\n", err)
 		return nil, err
 	}
@@ -202,10 +203,10 @@ func (r *noteRepository) GetNoteItems(ctx context.Context, p *pagination.Paginat
 	}
 
 	if err := r.db.Model(&entity.NoteItem{}).
-		Count(&total).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] NoteItem Repository - GetNoteItems : %v\n", err)
 		return nil, err
@@ -217,7 +218,7 @@ func (r *noteRepository) GetNoteItems(ctx context.Context, p *pagination.Paginat
 	return results, nil
 }
 
-func (r *noteRepository) GetNoteItemsByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]entity.NoteItem, error) {
+func (r *noteRepository) GetNoteItemsByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]entity.NoteItem, error) {
 	var results []entity.NoteItem
 	var total int64
 
@@ -228,11 +229,11 @@ func (r *noteRepository) GetNoteItemsByIds(ctx context.Context, ids []uint, p *p
 	}
 
 	if err := r.db.Model(&entity.NoteItem{}).
-		Count(&total).
 		Where("id IN (?)", ids).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] NoteItem Repository - GetNoteItemsByIds : %v\n", err)
 		return nil, err
@@ -244,22 +245,22 @@ func (r *noteRepository) GetNoteItemsByIds(ctx context.Context, ids []uint, p *p
 	return results, nil
 }
 
-func (r *noteRepository) UpdateNoteItemById(ctx context.Context, id uint, body *entity.NoteItem) (*entity.NoteItem, error) {
+func (r *noteRepository) UpdateNoteItemById(ctx context.Context, id uuid.UUID, body *entity.NoteItem) (*entity.NoteItem, error) {
 	var result entity.NoteItem
 	var total int64
 
 	if err := r.db.Model(&result).
-		Count(&total).
 		Where("id = ?", id).
 		Updates(&entity.NoteItem{
 			Content: body.Content,
 		}).
+		Count(&total).
 		Error; err != nil {
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] NoteItem Repository - UpdateNoteItemById : %v\n", err)
 		return nil, err
 	}
@@ -267,12 +268,12 @@ func (r *noteRepository) UpdateNoteItemById(ctx context.Context, id uint, body *
 	return &result, nil
 }
 
-func (r *noteRepository) DeleteNoteItemById(ctx context.Context, id uint) error {
+func (r *noteRepository) DeleteNoteItemById(ctx context.Context, id uuid.UUID) error {
 	var total int64
 
 	if err := r.db.Model(&entity.NoteItem{}).
-		Count(&total).
 		Where("id = ?", id).
+		Count(&total).
 		Delete(&entity.NoteItem{}).
 		Error; err != nil {
 		log.Printf("[ERROR] NoteItem Repository - DeleteNoteItemById : %v\n", err)
@@ -280,7 +281,7 @@ func (r *noteRepository) DeleteNoteItemById(ctx context.Context, id uint) error 
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] NoteItem Repository - DeleteNoteItemById : %v\n", err)
 		return err
 	}

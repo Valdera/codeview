@@ -39,16 +39,29 @@ func Init(cfg config.AppConfig) (*Server, error) {
 
 	// Initialize application repositories
 	imageRepo := repository.NewImageRepository(cfg, persistence.GCStorage)
+	tagRepo := repository.NewTagRepository(cfg, persistence.Postgres)
+	sourceRepo := repository.NewSourceRepository(cfg, persistence.Postgres)
+	difficultyRepo := repository.NewDifficultyRepository(cfg, persistence.Postgres)
+	questionRepo := repository.NewQuestionRepository(cfg, persistence.Postgres)
+	solutionRepo := repository.NewSolutionRepository(cfg, persistence.Postgres)
 	problemRepo := repository.NewProblemRepository(cfg, persistence.Postgres)
 	userRepo := repository.NewUserRepository(cfg, persistence.Postgres)
 
 	// Initialize application services
-	problemService := service.NewProblemService(cfg, problemRepo)
 	imageService := service.NewImageService(cfg, imageRepo)
+	tagService := service.NewTagService(cfg, tagRepo)
+	sourceService := service.NewSourceService(cfg, sourceRepo)
+	difficultyService := service.NewDifficultyService(cfg, difficultyRepo)
+	questionService := service.NewQuestionService(cfg, questionRepo)
+	solutionService := service.NewSolutionService(cfg, solutionRepo)
+	problemService := service.NewProblemService(cfg, persistence.Postgres, problemRepo, questionRepo, solutionRepo)
 	authservice := service.NewAuthService(cfg, userRepo)
 
 	// Initialize application handler
-	handler.InitProblemHandler(cfg, router, problemService)
+	handler.InitProblemHandler(cfg, router, problemService, questionService, solutionService)
+	handler.InitTagHandler(cfg, router, tagService)
+	handler.InitSourceHandler(cfg, router, sourceService)
+	handler.InitDifficultyHandler(cfg, router, difficultyService)
 	handler.InitImageHandler(cfg, router, imageService)
 	handler.InitAuthHandler(cfg, router, authservice)
 

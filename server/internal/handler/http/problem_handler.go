@@ -13,17 +13,27 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type ProblemHandler struct {
-	cfg            config.AppConfig
-	problemService service.ProblemService
+	cfg             config.AppConfig
+	problemService  service.ProblemService
+	questionService service.QuestionService
+	solutionService service.SolutionService
 }
 
-func InitProblemHandler(cfg config.AppConfig, router *gin.Engine, problemService service.ProblemService) {
+func InitProblemHandler(
+	cfg config.AppConfig,
+	router *gin.Engine,
+	problemService service.ProblemService,
+	questionService service.QuestionService,
+	solutionService service.SolutionService) {
 	h := &ProblemHandler{
 		cfg,
 		problemService,
+		questionService,
+		solutionService,
 	}
 
 	g := router.Group("/api/problem")
@@ -35,6 +45,14 @@ func InitProblemHandler(cfg config.AppConfig, router *gin.Engine, problemService
 	g.PATCH("/:id", h.UpdateProblemById)
 	g.DELETE("/:id", h.DeleteProblemById)
 
+	g_question := g.Group("/question")
+	g_question.PATCH("/:id", h.UpdateProblemQuestionById)
+
+	g_solution := g.Group("/solution")
+	g_solution.POST("/", h.CreateProblemSolution)
+	g_solution.PATCH("/:id", h.UpdateProblemSolutionById)
+	g_solution.DELETE("/:id", h.DeleteProblemSolutionById)
+
 }
 
 func (h *ProblemHandler) CreateProblem(c *gin.Context) {
@@ -42,7 +60,7 @@ func (h *ProblemHandler) CreateProblem(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
-		e := exception.NewBadRequest(fmt.Sprintf("Invalid request body: %s", err.Error()))
+		e := exception.NewBadRequest(fmt.Sprintf("invalid request body: %s", err.Error()))
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
@@ -56,7 +74,9 @@ func (h *ProblemHandler) CreateProblem(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"data":    res,
+		"data": gin.H{
+			"id": res.ID,
+		},
 		"message": "success",
 	})
 }
@@ -64,14 +84,14 @@ func (h *ProblemHandler) CreateProblem(c *gin.Context) {
 func (h *ProblemHandler) GetProblems(c *gin.Context) {
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil {
-		e := exception.NewBadRequest("Invalid page request params")
+		e := exception.NewBadRequest("invalid page request params")
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
 
 	size, err := strconv.Atoi(c.DefaultQuery("size", "10"))
 	if err != nil {
-		e := exception.NewBadRequest("Invalid size request params")
+		e := exception.NewBadRequest("invalid size request params")
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
@@ -98,14 +118,12 @@ func (h *ProblemHandler) GetProblems(c *gin.Context) {
 }
 
 func (h *ProblemHandler) GetProblemById(c *gin.Context) {
-	u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		e := exception.NewBadRequest("Invalid ID params")
+		e := exception.NewBadRequest("invalid ID params")
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
-
-	id := uint(u64)
 
 	ctx := c.Request.Context()
 	res, err := h.problemService.GetProblemById(ctx, id)
@@ -124,14 +142,14 @@ func (h *ProblemHandler) GetProblemById(c *gin.Context) {
 func (h *ProblemHandler) GetProblemsByIds(c *gin.Context) {
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil {
-		e := exception.NewBadRequest("Invalid page request params")
+		e := exception.NewBadRequest("invalid page request params")
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
 
 	size, err := strconv.Atoi(c.DefaultQuery("size", "10"))
 	if err != nil {
-		e := exception.NewBadRequest("Invalid size request params")
+		e := exception.NewBadRequest("invalid size request params")
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
@@ -139,16 +157,16 @@ func (h *ProblemHandler) GetProblemsByIds(c *gin.Context) {
 	p := pagination.Parse(page, size)
 	p.ValidatePagination()
 
-	var ids []uint
+	var ids []uuid.UUID
 
 	for _, s := range strings.Split(c.Query("ids"), ",") {
-		u64, err := strconv.ParseUint(s, 10, 32)
+		id, err := uuid.Parse(s)
 		if err != nil {
-			e := exception.NewBadRequest("Invalid ID")
+			e := exception.NewBadRequest(fmt.Sprintf("invalid ID %s: %v", s, err))
 			c.JSON(e.Status(), gin.H{"error": e})
 			return
 		}
-		ids = append(ids, uint(u64))
+		ids = append(ids, id)
 	}
 
 	ctx := c.Request.Context()
@@ -174,19 +192,17 @@ func (h *ProblemHandler) UpdateProblemById(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&body)
 	if err != nil {
-		e := exception.NewBadRequest(fmt.Sprintf("Invalid request body: %s", err.Error()))
+		e := exception.NewBadRequest(fmt.Sprintf("invalid request body: %s", err.Error()))
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
 
-	u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		e := exception.NewBadRequest("Invalid ID params")
+		e := exception.NewBadRequest("invalid ID params")
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
-
-	id := uint(u64)
 
 	ctx := c.Request.Context()
 	_, err = h.problemService.UpdateProblemById(ctx, id, &body)
@@ -202,14 +218,12 @@ func (h *ProblemHandler) UpdateProblemById(c *gin.Context) {
 }
 
 func (h *ProblemHandler) DeleteProblemById(c *gin.Context) {
-	u64, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		e := exception.NewBadRequest("Invalid ID params")
+		e := exception.NewBadRequest("invalid ID params")
 		c.JSON(e.Status(), gin.H{"error": e})
 		return
 	}
-
-	id := uint(u64)
 
 	ctx := c.Request.Context()
 	err = h.problemService.DeleteProblemById(ctx, id)
@@ -219,7 +233,112 @@ func (h *ProblemHandler) DeleteProblemById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusAccepted, gin.H{
+		"message": "success",
+	})
+}
+
+func (h *ProblemHandler) UpdateProblemQuestionById(c *gin.Context) {
+	var body request.QuestionUpdate
+
+	err := c.ShouldBindJSON(&body)
+	if err != nil {
+		e := exception.NewBadRequest(fmt.Sprintf("invalid request body: %s", err.Error()))
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		e := exception.NewBadRequest("invalid ID params")
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	ctx := c.Request.Context()
+	_, err = h.questionService.UpdateQuestionById(ctx, id, &body)
+	if err != nil {
+		e := exception.NewBadRequest(err.Error())
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}
+
+func (h *ProblemHandler) CreateProblemSolution(c *gin.Context) {
+	var body request.SolutionCreate
+
+	err := c.ShouldBindJSON(&body)
+	if err != nil {
+		e := exception.NewBadRequest(fmt.Sprintf("invalid request body: %s", err.Error()))
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	ctx := c.Request.Context()
+	_, err = h.solutionService.CreateSolution(ctx, &body)
+	if err != nil {
+		e := exception.NewBadRequest(err.Error())
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}
+
+func (h *ProblemHandler) UpdateProblemSolutionById(c *gin.Context) {
+	var body request.SolutionUpdate
+
+	err := c.ShouldBindJSON(&body)
+	if err != nil {
+		e := exception.NewBadRequest(fmt.Sprintf("invalid request body: %s", err.Error()))
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		e := exception.NewBadRequest("invalid ID params")
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	ctx := c.Request.Context()
+	_, err = h.solutionService.UpdateSolutionById(ctx, id, &body)
+	if err != nil {
+		e := exception.NewBadRequest(err.Error())
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+	})
+}
+
+func (h *ProblemHandler) DeleteProblemSolutionById(c *gin.Context) {
+
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		e := exception.NewBadRequest("invalid ID params")
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	ctx := c.Request.Context()
+	err = h.solutionService.DeleteSolutionById(ctx, id)
+	if err != nil {
+		e := exception.NewBadRequest(err.Error())
+		c.JSON(e.Status(), gin.H{"error": e})
+		return
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{
 		"message": "success",
 	})
 }

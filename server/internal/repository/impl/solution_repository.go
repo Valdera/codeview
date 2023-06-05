@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,6 +25,13 @@ func NewSolutionRepository(cfg config.AppConfig, db *gorm.DB) repository.Solutio
 	}
 }
 
+func (r *solutionRepository) WithTrx(trxHandle *gorm.DB) repository.SolutionRepository {
+	return &solutionRepository{
+		cfg: r.cfg,
+		db:  trxHandle,
+	}
+}
+
 func (r *solutionRepository) CreateSolution(ctx context.Context, body *entity.Solution) (*entity.Solution, error) {
 	if err := r.db.Model(&entity.Solution{}).
 		Create(body).
@@ -35,21 +43,21 @@ func (r *solutionRepository) CreateSolution(ctx context.Context, body *entity.So
 	return body, nil
 }
 
-func (r *solutionRepository) GetSolutionById(ctx context.Context, id uint) (*entity.Solution, error) {
+func (r *solutionRepository) GetSolutionById(ctx context.Context, id uuid.UUID) (*entity.Solution, error) {
 	var result entity.Solution
 	var total int64
 
 	if err := r.db.Model(&entity.Solution{}).
-		Count(&total).
 		Where("id = ?", id).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Solution Repository - GetSolutionById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("tag with id %d does not exists", id)
+		err := fmt.Errorf("tag with id %s does not exists", id)
 		log.Printf("[ERROR] Solution Repository - GetSolutionById : %v\n", err)
 		return nil, err
 	}
@@ -68,10 +76,10 @@ func (r *solutionRepository) GetSolutions(ctx context.Context, p *pagination.Pag
 	}
 
 	if err := r.db.Model(&entity.Solution{}).
-		Count(&total).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Solution Repository - GetSolutions : %v\n", err)
 		return nil, err
@@ -83,7 +91,7 @@ func (r *solutionRepository) GetSolutions(ctx context.Context, p *pagination.Pag
 	return results, nil
 }
 
-func (r *solutionRepository) GetSolutionsByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]entity.Solution, error) {
+func (r *solutionRepository) GetSolutionsByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]entity.Solution, error) {
 	var results []entity.Solution
 	var total int64
 
@@ -94,11 +102,11 @@ func (r *solutionRepository) GetSolutionsByIds(ctx context.Context, ids []uint, 
 	}
 
 	if err := r.db.Model(&entity.Solution{}).
-		Count(&total).
 		Where("id IN (?)", ids).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Solution Repository - GetSolutionsByIds : %v\n", err)
 		return nil, err
@@ -110,22 +118,22 @@ func (r *solutionRepository) GetSolutionsByIds(ctx context.Context, ids []uint, 
 	return results, nil
 }
 
-func (r *solutionRepository) UpdateSolutionById(ctx context.Context, id uint, body *entity.Solution) (*entity.Solution, error) {
+func (r *solutionRepository) UpdateSolutionById(ctx context.Context, id uuid.UUID, body *entity.Solution) (*entity.Solution, error) {
 	var result entity.Solution
 	var total int64
 
 	if err := r.db.Model(&result).
-		Count(&total).
 		Where("id = ?", id).
 		Updates(&entity.Solution{
 			Content: body.Content,
 		}).
+		Count(&total).
 		Error; err != nil {
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Solution Repository - UpdateSolutionById : %v\n", err)
 		return nil, err
 	}
@@ -133,12 +141,12 @@ func (r *solutionRepository) UpdateSolutionById(ctx context.Context, id uint, bo
 	return &result, nil
 }
 
-func (r *solutionRepository) DeleteSolutionById(ctx context.Context, id uint) error {
+func (r *solutionRepository) DeleteSolutionById(ctx context.Context, id uuid.UUID) error {
 	var total int64
 
 	if err := r.db.Model(&entity.Solution{}).
-		Count(&total).
 		Where("id = ?", id).
+		Count(&total).
 		Delete(&entity.Solution{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Solution Repository - DeleteSolutionById : %v\n", err)
@@ -146,7 +154,7 @@ func (r *solutionRepository) DeleteSolutionById(ctx context.Context, id uint) er
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Solution Repository - DeleteSolutionById : %v\n", err)
 		return err
 	}

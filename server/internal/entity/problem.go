@@ -7,10 +7,11 @@ import (
 )
 
 type Problem struct {
-	ID           uuid.UUID `gorm:"primaryKey"`
+	ID           uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Title        string
 	Rating       *int
-	DifficultyID uint
+	Emoji        string
+	DifficultyID uuid.UUID
 	Difficulty   Difficulty `gorm:"foreignKey:DifficultyID"`
 	Tags         []Tag      `gorm:"many2many:problems_tags"`
 	Sources      []Source   `gorm:"many2many:problems_sources"`
@@ -21,7 +22,7 @@ type Problem struct {
 	DeletedAt    *time.Time
 }
 type Source struct {
-	ID        uuid.UUID `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Label     string
 	Color     string
 	CreatedAt time.Time
@@ -30,7 +31,7 @@ type Source struct {
 }
 
 type Difficulty struct {
-	ID        uuid.UUID `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Label     string
 	Color     string
 	CreatedAt time.Time
@@ -39,7 +40,7 @@ type Difficulty struct {
 }
 
 type Solution struct {
-	ID        uuid.UUID `gorm:"primaryKey"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	ProblemID uuid.UUID
 	Content   string
 	CreatedAt time.Time
@@ -48,8 +49,8 @@ type Solution struct {
 }
 
 type Question struct {
-	ID        uuid.UUID `gorm:"primaryKey"`
-	ProblemID uint
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	ProblemID uuid.UUID
 	Content   string
 	CreatedAt time.Time
 	UpdatedAt time.Time

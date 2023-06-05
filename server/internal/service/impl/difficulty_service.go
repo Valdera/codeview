@@ -11,6 +11,8 @@ import (
 	"codeview/internal/util/pagination"
 	"context"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 type difficultyService struct {
@@ -64,7 +66,7 @@ func (s *difficultyService) GetDifficulties(ctx context.Context, p *pagination.P
 	return responses, nil
 }
 
-func (s *difficultyService) GetDifficultyById(ctx context.Context, id uint) (*response.Difficulty, error) {
+func (s *difficultyService) GetDifficultyById(ctx context.Context, id uuid.UUID) (*response.Difficulty, error) {
 	difficulty, err := s.difficultyRepo.GetDifficultyById(ctx, id)
 	if err != nil {
 		log.Printf("[ERROR] Difficulty Service - GetDifficultyById : %v\n", err)
@@ -80,7 +82,7 @@ func (s *difficultyService) GetDifficultyById(ctx context.Context, id uint) (*re
 	return response, nil
 }
 
-func (s *difficultyService) GetDifficultiesByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]response.Difficulty, error) {
+func (s *difficultyService) GetDifficultiesByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]response.Difficulty, error) {
 	difficulties, err := s.difficultyRepo.GetDifficultiesByIds(ctx, ids, p)
 	if err != nil {
 		log.Printf("[ERROR] Difficulty Service - GetDifficultiesByIds : %v\n", err)
@@ -100,7 +102,7 @@ func (s *difficultyService) GetDifficultiesByIds(ctx context.Context, ids []uint
 	return responses, nil
 }
 
-func (s *difficultyService) UpdateDifficultyById(ctx context.Context, id uint, body *request.DifficultyUpdate) (*response.Difficulty, error) {
+func (s *difficultyService) UpdateDifficultyById(ctx context.Context, id uuid.UUID, body *request.DifficultyUpdate) (*response.Difficulty, error) {
 	difficulty, err := s.difficultyRepo.UpdateDifficultyById(ctx, id, &entity.Difficulty{
 		Label: body.Label,
 		Color: body.Color,
@@ -119,7 +121,7 @@ func (s *difficultyService) UpdateDifficultyById(ctx context.Context, id uint, b
 	return response, err
 }
 
-func (s *difficultyService) DeleteDifficultyById(ctx context.Context, id uint) error {
+func (s *difficultyService) DeleteDifficultyById(ctx context.Context, id uuid.UUID) error {
 	if err := s.difficultyRepo.DeleteDifficultyById(ctx, id); err != nil {
 		log.Printf("[ERROR] Difficulty Service - DeleteDifficultyById : %v\n", err)
 		return err

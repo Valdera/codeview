@@ -52,6 +52,7 @@ func ProblemToDTO(problem *entity.Problem) (*response.Problem, error) {
 		Title:      problem.Title,
 		Rating:     *problem.Rating,
 		Difficulty: *difficultyDto,
+		Emoji:      problem.Emoji,
 		Tags:       tagsDto,
 		Sources:    sourcesDto,
 		Solutions:  solutionsDto,
@@ -59,18 +60,6 @@ func ProblemToDTO(problem *entity.Problem) (*response.Problem, error) {
 		CreatedAt:  problem.CreatedAt,
 		UpdatedAt:  problem.UpdatedAt,
 	}, nil
-}
-
-func TagToDTO(tag *entity.Tag) (*response.Tag, error) {
-	res := response.Tag{
-		ID:        tag.ID,
-		Label:     tag.Label,
-		Color:     tag.Color,
-		CreatedAt: tag.CreatedAt,
-		UpdatedAt: tag.UpdatedAt,
-	}
-
-	return &res, nil
 }
 
 func SourceToDTO(source *entity.Source) (*response.Source, error) {

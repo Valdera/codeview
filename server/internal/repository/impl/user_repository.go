@@ -53,9 +53,9 @@ func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*ent
 	var total int64
 
 	if err := r.db.Model(&entity.User{}).
-		Count(&total).
 		Where("email = ?", email).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] User Repository - GetUserByEmail : %v\n", err)
 		return nil, err
@@ -75,9 +75,9 @@ func (r *userRepository) GetUserByUsername(ctx context.Context, username string)
 	var total int64
 
 	if err := r.db.Model(&entity.User{}).
-		Count(&total).
 		Where("username = ?", username).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] User Repository - GetUserByEmail : %v\n", err)
 		return nil, err

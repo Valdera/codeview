@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,6 +25,13 @@ func NewQuestionRepository(cfg config.AppConfig, db *gorm.DB) repository.Questio
 	}
 }
 
+func (r *questionRepository) WithTrx(trxHandle *gorm.DB) repository.QuestionRepository {
+	return &questionRepository{
+		cfg: r.cfg,
+		db:  trxHandle,
+	}
+}
+
 func (r *questionRepository) CreateQuestion(ctx context.Context, body *entity.Question) (*entity.Question, error) {
 	if err := r.db.Model(&entity.Question{}).
 		Create(body).
@@ -35,21 +43,21 @@ func (r *questionRepository) CreateQuestion(ctx context.Context, body *entity.Qu
 	return body, nil
 }
 
-func (r *questionRepository) GetQuestionById(ctx context.Context, id uint) (*entity.Question, error) {
+func (r *questionRepository) GetQuestionById(ctx context.Context, id uuid.UUID) (*entity.Question, error) {
 	var result entity.Question
 	var total int64
 
 	if err := r.db.Model(&entity.Question{}).
-		Count(&total).
 		Where("id = ?", id).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Question Repository - GetQuestionById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("tag with id %d does not exists", id)
+		err := fmt.Errorf("tag with id %s does not exists", id)
 		log.Printf("[ERROR] Question Repository - GetQuestionById : %v\n", err)
 		return nil, err
 	}
@@ -68,10 +76,10 @@ func (r *questionRepository) GetQuestions(ctx context.Context, p *pagination.Pag
 	}
 
 	if err := r.db.Model(&entity.Question{}).
-		Count(&total).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Question Repository - GetQuestions : %v\n", err)
 		return nil, err
@@ -83,7 +91,7 @@ func (r *questionRepository) GetQuestions(ctx context.Context, p *pagination.Pag
 	return results, nil
 }
 
-func (r *questionRepository) GetQuestionsByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]entity.Question, error) {
+func (r *questionRepository) GetQuestionsByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]entity.Question, error) {
 	var results []entity.Question
 	var total int64
 
@@ -94,11 +102,11 @@ func (r *questionRepository) GetQuestionsByIds(ctx context.Context, ids []uint, 
 	}
 
 	if err := r.db.Model(&entity.Question{}).
-		Count(&total).
 		Where("id IN (?)", ids).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Question Repository - GetQuestionsByIds : %v\n", err)
 		return nil, err
@@ -110,22 +118,22 @@ func (r *questionRepository) GetQuestionsByIds(ctx context.Context, ids []uint, 
 	return results, nil
 }
 
-func (r *questionRepository) UpdateQuestionById(ctx context.Context, id uint, body *entity.Question) (*entity.Question, error) {
+func (r *questionRepository) UpdateQuestionById(ctx context.Context, id uuid.UUID, body *entity.Question) (*entity.Question, error) {
 	var result entity.Question
 	var total int64
 
 	if err := r.db.Model(&result).
-		Count(&total).
 		Where("id = ?", id).
 		Updates(&entity.Question{
 			Content: body.Content,
 		}).
+		Count(&total).
 		Error; err != nil {
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Question Repository - UpdateQuestionById : %v\n", err)
 		return nil, err
 	}
@@ -133,12 +141,12 @@ func (r *questionRepository) UpdateQuestionById(ctx context.Context, id uint, bo
 	return &result, nil
 }
 
-func (r *questionRepository) DeleteQuestionById(ctx context.Context, id uint) error {
+func (r *questionRepository) DeleteQuestionById(ctx context.Context, id uuid.UUID) error {
 	var total int64
 
 	if err := r.db.Model(&entity.Question{}).
-		Count(&total).
 		Where("id = ?", id).
+		Count(&total).
 		Delete(&entity.Question{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Question Repository - DeleteQuestionById : %v\n", err)
@@ -146,7 +154,7 @@ func (r *questionRepository) DeleteQuestionById(ctx context.Context, id uint) er
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Question Repository - DeleteQuestionById : %v\n", err)
 		return err
 	}

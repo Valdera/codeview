@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -35,21 +36,21 @@ func (r *sourceRepository) CreateSource(ctx context.Context, body *entity.Source
 	return body, nil
 }
 
-func (r *sourceRepository) GetSourceById(ctx context.Context, id uint) (*entity.Source, error) {
+func (r *sourceRepository) GetSourceById(ctx context.Context, id uuid.UUID) (*entity.Source, error) {
 	var result entity.Source
 	var total int64
 
 	if err := r.db.Model(&entity.Source{}).
-		Count(&total).
 		Where("id = ?", id).
 		Find(&result).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Source Repository - GetSourceById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("tag with id %d does not exists", id)
+		err := fmt.Errorf("tag with id %s does not exists", id)
 		log.Printf("[ERROR] Source Repository - GetSourceById : %v\n", err)
 		return nil, err
 	}
@@ -68,10 +69,10 @@ func (r *sourceRepository) GetSources(ctx context.Context, p *pagination.Paginat
 	}
 
 	if err := r.db.Model(&entity.Source{}).
-		Count(&total).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Source Repository - GetSources : %v\n", err)
 		return nil, err
@@ -83,7 +84,7 @@ func (r *sourceRepository) GetSources(ctx context.Context, p *pagination.Paginat
 	return results, nil
 }
 
-func (r *sourceRepository) GetSourcesByIds(ctx context.Context, ids []uint, p *pagination.Pagination) ([]entity.Source, error) {
+func (r *sourceRepository) GetSourcesByIds(ctx context.Context, ids []uuid.UUID, p *pagination.Pagination) ([]entity.Source, error) {
 	var results []entity.Source
 	var total int64
 
@@ -94,11 +95,11 @@ func (r *sourceRepository) GetSourcesByIds(ctx context.Context, ids []uint, p *p
 	}
 
 	if err := r.db.Model(&entity.Source{}).
-		Count(&total).
 		Where("id IN (?)", ids).
 		Offset(p.GetOffset()).
 		Limit(p.PageSize).
 		Find(&results).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Source Repository - GetSourcesByIds : %v\n", err)
 		return nil, err
@@ -110,24 +111,24 @@ func (r *sourceRepository) GetSourcesByIds(ctx context.Context, ids []uint, p *p
 	return results, nil
 }
 
-func (r *sourceRepository) UpdateSourceById(ctx context.Context, id uint, body *entity.Source) (*entity.Source, error) {
+func (r *sourceRepository) UpdateSourceById(ctx context.Context, id uuid.UUID, body *entity.Source) (*entity.Source, error) {
 	var result entity.Source
 	var total int64
 
 	if err := r.db.Model(&result).
-		Count(&total).
 		Where("id = ?", id).
 		Updates(&entity.Source{
 			Label: body.Label,
 			Color: body.Color,
 		}).
+		Count(&total).
 		Error; err != nil {
 		log.Printf("[ERROR] Source Repository - UpdateSourceById : %v\n", err)
 		return nil, err
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Source Repository - UpdateSourceById : %v\n", err)
 		return nil, err
 	}
@@ -135,12 +136,12 @@ func (r *sourceRepository) UpdateSourceById(ctx context.Context, id uint, body *
 	return &result, nil
 }
 
-func (r *sourceRepository) DeleteSourceById(ctx context.Context, id uint) error {
+func (r *sourceRepository) DeleteSourceById(ctx context.Context, id uuid.UUID) error {
 	var total int64
 
 	if err := r.db.Model(&entity.Source{}).
-		Count(&total).
 		Where("id = ?", id).
+		Count(&total).
 		Delete(&entity.Source{}).
 		Error; err != nil {
 		log.Printf("[ERROR] Source Repository - DeleteSourceById : %v\n", err)
@@ -148,7 +149,7 @@ func (r *sourceRepository) DeleteSourceById(ctx context.Context, id uint) error 
 	}
 
 	if total == 0 {
-		err := fmt.Errorf("problem with id %d does not exists", id)
+		err := fmt.Errorf("problem with id %s does not exists", id)
 		log.Printf("[ERROR] Source Repository - DeleteSourceById : %v\n", err)
 		return err
 	}

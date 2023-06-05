@@ -10,7 +10,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strconv"
 	"time"
 )
 
@@ -42,7 +41,7 @@ func (s *authService) Login(ctx context.Context, req *request.Login) (string, er
 		return "", errors.New("invalid email or password")
 	}
 
-	token, err := s.jwtManager.GenerateJwt(strconv.FormatUint(uint64(user.ID), 10), 10*time.Hour)
+	token, err := s.jwtManager.GenerateJwt(user.ID.String(), 10*time.Hour)
 	if err != nil {
 		log.Printf("[ERROR] User Service - Login : %v\n", err)
 		return "", err
@@ -62,7 +61,7 @@ func (s *authService) Register(ctx context.Context, req *request.Register) (stri
 		return "", err
 	}
 
-	token, err := s.jwtManager.GenerateJwt(strconv.FormatUint(uint64(user.ID), 10), 10*time.Hour)
+	token, err := s.jwtManager.GenerateJwt(user.ID.String(), 10*time.Hour)
 	if err != nil {
 		log.Printf("[ERROR] User Service - Register : %v\n", err)
 		return "", err
